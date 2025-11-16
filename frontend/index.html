@@ -21,16 +21,17 @@
                     <span class="logo-text">TixMaster</span>
                 </div>
 
-                <nav class="desktop-nav">
-                    <a href="#events" class="nav-link">Events</a>
-                    <a href="#sports" class="nav-link">Sports</a>
-                    <a href="#concerts" class="nav-link">Concerts</a>
-                    <a href="#theater" class="nav-link">Theater</a>
-                </nav>
+                <!-- Removed desktop nav as per user's HTML -->
 
                 <div class="header-actions">
-                    <button class="btn-secondary">Sign In</button>
-                    <button class="btn-primary">Sell Tickets</button>
+                    <!-- API INTEGRATION: Sign In button -->
+                    <!-- When clicked, redirect to login.html or show login modal -->
+                    <!-- After login, store customer data in localStorage or session -->
+                    <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
+                    
+                    <!-- API INTEGRATION: Sell Tickets button -->
+                    <!-- Redirect to seller dashboard or registration page -->
+                    <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
                 </div>
 
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
@@ -47,13 +48,15 @@
             </div>
 
             <nav class="mobile-nav" id="mobileNav">
-                <a href="#events" class="mobile-nav-link">Events</a>
-                <a href="#sports" class="mobile-nav-link">Sports</a>
-                <a href="#concerts" class="mobile-nav-link">Concerts</a>
-                <a href="#theater" class="mobile-nav-link">Theater</a>
+                <!-- API INTEGRATION: Category navigation links -->
+                <!-- Each link redirects to category.html with category parameter -->
+                <a href="category.html?category=All" class="mobile-nav-link">Events</a>
+                <a href="category.html?category=Sports" class="mobile-nav-link">Sports</a>
+                <a href="category.html?category=Concerts" class="mobile-nav-link">Concerts</a>
+                <a href="category.html?category=Theater" class="mobile-nav-link">Theater</a>
                 <div class="mobile-nav-actions">
-                    <button class="btn-secondary full-width">Sign In</button>
-                    <button class="btn-primary full-width">Sell Tickets</button>
+                    <button class="btn-secondary full-width" onclick="window.location.href='login.html'">Sign In</button>
+                    <button class="btn-primary full-width" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
                 </div>
             </nav>
         </div>
@@ -72,29 +75,41 @@
                     Your journey to amazing live experiences starts here.
                 </p>
 
-                <div class="search-box">
+                <!-- API INTEGRATION: Search Form -->
+                <!-- When submitted, call searchEvents() function in script.js -->
+                <form id="searchForm" class="search-box" onsubmit="event.preventDefault(); searchEvents();">
                     <div class="search-field">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"/>
                             <path d="m21 21-4.35-4.35"/>
                         </svg>
+                        <!-- API INTEGRATION: Search input -->
+                        <!-- SQL: SELECT * FROM EVENT WHERE event_name LIKE '%search_term%' -->
                         <input
                             type="text"
+                            id="searchInput"
                             placeholder="Search for events, artists, teams, or venues..."
                             class="search-input"
                         />
                     </div>
                     <div class="search-filters">
+                        <!-- API INTEGRATION: Location filter -->
+                        <!-- Populate this dropdown dynamically from VENUE table -->
+                        <!-- SQL: SELECT DISTINCT city FROM VENUE ORDER BY city -->
                         <div class="filter-group">
                             <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                                 <circle cx="12" cy="10" r="3"/>
                             </svg>
-                            <select class="filter-select">
-                                <option>All Locations</option>
-                                <option>Toronto, ON</option> 
+                            <select id="locationFilter" class="filter-select">
+                                <option value="">All Locations</option>
+                                <option value="Toronto">Toronto, ON</option>
+                                <!-- More cities will be loaded via API -->
                             </select>
                         </div>
+                        
+                        <!-- API INTEGRATION: Date filter -->
+                        <!-- Filter events based on event_date in EVENT table -->
                         <div class="filter-group">
                             <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -102,24 +117,27 @@
                                 <line x1="8" y1="2" x2="8" y2="6"/>
                                 <line x1="3" y1="10" x2="21" y2="10"/>
                             </svg>
-                            <select class="filter-select">
-                                <option>All Dates</option>
-                                <option>Today</option>
-                                <option>This Week</option>
-                                <option>This Month</option>
-                                <option>This Year</option>
+                            <select id="dateFilter" class="filter-select">
+                                <option value="">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
                             </select>
                         </div>
-                        <button class="search-button">Search</button>
+                        
+                        <button type="submit" class="search-button">Search</button>
                     </div>
-                </div>
+                </form>
 
+                <!-- API INTEGRATION: Popular searches -->
+                <!-- These tags can trigger searches for specific events or categories -->
                 <div class="popular-searches">
                     <span class="popular-label">Popular:</span>
-                    <button class="popular-tag">Rock Legends Live</button>
-                    <button class="popular-tag">Shakespeare Festival</button>
-                    <button class="popular-tag">Comedy Night Special</button>
-                    <button class="popular-tag">Jazz Evening</button>
+                    <button class="popular-tag" onclick="quickSearch('Rock Legends Live')">Rock Legends Live</button>
+                    <button class="popular-tag" onclick="quickSearch('Shakespeare Festival')">Shakespeare Festival</button>
+                    <button class="popular-tag" onclick="quickSearch('Comedy Night Special')">Comedy Night Special</button>
+                    <button class="popular-tag" onclick="quickSearch('Jazz Evening')">Jazz Evening</button>
                 </div>
             </div>
         </div>
@@ -135,12 +153,29 @@
                 </p>
             </div>
 
+            <!-- API INTEGRATION: Featured events grid -->
+            <!-- This grid is populated dynamically by fetchFeaturedEvents() in script.js -->
+            <!-- SQL QUERY:
+                 SELECT e.*, v.venue_name, v.city, c.category_name, 
+                        MIN(t.price) as min_price
+                 FROM EVENT e
+                 JOIN VENUE v ON e.venue_id = v.venue_id
+                 JOIN CATEGORY c ON e.category_id = c.category_id
+                 JOIN TICKET t ON e.event_id = t.event_id
+                 WHERE e.event_date >= CURRENT_DATE
+                 GROUP BY e.event_id
+                 ORDER BY e.event_date ASC
+                 LIMIT 6
+            -->
             <div class="events-grid" id="eventsGrid">
-                <!-- Events will be dynamically loaded here -->
+                <!-- Events will be dynamically loaded here via JavaScript -->
+                <!-- Each event card should be clickable and redirect to event-details.html?id={event_id} -->
             </div>
 
+            <!-- API INTEGRATION: View all button -->
+            <!-- Redirects to all-events.html or category.html with no filters -->
             <div class="view-all-container">
-                <button class="btn-view-all">View All Events</button>
+                <button class="btn-view-all" onclick="window.location.href='category.html?category=All'">View All Events</button>
             </div>
         </div>
     </section>
@@ -155,8 +190,15 @@
                 </p>
             </div>
 
-            <div class="categories-grid">
-                <div class="category-card">
+            <!-- API INTEGRATION: Category cards -->
+            <!-- Each card should be clickable and redirect to category.html with the category filter -->
+            <!-- Event counts should be fetched dynamically from database -->
+            <!-- SQL: SELECT category_name, COUNT(event_id) as event_count 
+                      FROM CATEGORY c LEFT JOIN EVENT e ON c.category_id = e.category_id
+                      GROUP BY c.category_id -->
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Made category cards clickable with onclick events -->
+                <div class="category-card" onclick="window.location.href='category.html?category=Concerts'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 18V5l12-2v13"/>
@@ -165,10 +207,10 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Concerts</h3>
-                    <p class="category-count">1,234 events</p>
+                    <p class="category-count" id="concertsCount">Loading...</p>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" onclick="window.location.href='category.html?category=Sports'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
@@ -180,10 +222,10 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Sports</h3>
-                    <p class="category-count">892 events</p>
+                    <p class="category-count" id="sportsCount">Loading...</p>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" onclick="window.location.href='category.html?category=Theater'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/>
@@ -191,10 +233,10 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Theater</h3>
-                    <p class="category-count">456 events</p>
+                    <p class="category-count" id="theaterCount">Loading...</p>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" onclick="window.location.href='category.html?category=Comedy'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12"/>
@@ -202,10 +244,10 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Comedy</h3>
-                    <p class="category-count">234 events</p>
+                    <p class="category-count" id="comedyCount">Loading...</p>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" onclick="window.location.href='category.html?category=Conferences'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
@@ -213,10 +255,10 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Conferences</h3>
-                    <p class="category-count">567 events</p>
+                    <p class="category-count" id="conferencesCount">Loading...</p>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" onclick="window.location.href='category.html?category=Festivals'">
                     <div class="category-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5.8 11.3 2 22l10.7-3.79"/>
@@ -231,7 +273,7 @@
                         </svg>
                     </div>
                     <h3 class="category-name">Festivals</h3>
-                    <p class="category-count">189 events</p>
+                    <p class="category-count" id="festivalsCount">Loading...</p>
                 </div>
             </div>
         </div>
@@ -346,11 +388,11 @@
                 <div class="footer-column">
                     <h4 class="footer-heading">Explore</h4>
                     <ul class="footer-links">
-                        <li><a href="#concerts">Concerts</a></li>
-                        <li><a href="#sports">Sports</a></li>
-                        <li><a href="#theater">Theater</a></li>
-                        <li><a href="#comedy">Comedy</a></li>
-                        <li><a href="#festivals">Festivals</a></li>
+                        <li><a href="category.html?category=Concerts">Concerts</a></li>
+                        <li><a href="category.html?category=Sports">Sports</a></li>
+                        <li><a href="category.html?category=Theater">Theater</a></li>
+                        <li><a href="category.html?category=Comedy">Comedy</a></li>
+                        <li><a href="category.html?category=Festivals">Festivals</a></li>
                     </ul>
                 </div>
 
@@ -400,6 +442,7 @@
         </div>
     </footer>
 
+    <script src="api-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

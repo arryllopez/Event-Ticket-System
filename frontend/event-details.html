@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - TixMaster</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .event-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .event-header {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+        .event-image-large {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+        .event-info {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .event-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+        }
+        .tickets-section {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        .ticket-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .ticket-option:hover {
+            border-color: var(--primary);
+            background: var(--background);
+        }
+        .ticket-info h4 {
+            margin: 0 0 8px 0;
+            color: var(--text);
+        }
+        .ticket-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .ticket-price {
+            text-align: right;
+        }
+        .ticket-price .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .ticket-price .available {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        @media (min-width: 768px) {
+            .event-header {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h8"/>
+                    </svg>
+                    <span class="logo-text">TixMaster</span>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
+                    <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Event Details -->
+    <!-- API INTEGRATION: All event details fetched from database -->
+    <!-- SQL QUERY:
+         SELECT e.*, v.*, c.*
+         FROM EVENT e
+         JOIN VENUE v ON e.venue_id = v.venue_id
+         JOIN CATEGORY c ON e.category_id = c.category_id
+         WHERE e.event_id = ?
+    -->
+    <div class="event-details-container">
+        <button onclick="history.back()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 16px; margin-bottom: 24px;">
+            ← Back to Events
+        </button>
+
+        <div class="event-header">
+            <img id="eventImage" src="/placeholder.svg" alt="Event" class="event-image-large">
+            
+            <div class="event-info">
+                <div>
+                    <span id="eventCategory" class="event-category" style="display: inline-block; margin-bottom: 12px;"></span>
+                    <h1 id="eventName" style="font-size: 36px; margin: 0 0 12px 0; color: var(--text);"></h1>
+                    <p id="eventDescription" style="color: var(--text-secondary); line-height: 1.6;"></p>
+                </div>
+
+                <div class="event-meta">
+                    <div class="meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px; color: var(--primary);">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <div>
+                            <strong>Date & Time</strong>
+                            <p id="eventDateTime" style="margin: 4px 0 0 0; color: var(--text-secondary);"></p>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px; color: var(--primary);">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <div>
+                            <strong>Venue</strong>
+                            <p id="eventVenue" style="margin: 4px 0 0 0; color: var(--text-secondary);"></p>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px; color: var(--primary);">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <div>
+                            <strong>Organizer</strong>
+                            <p id="eventOrganizer" style="margin: 4px 0 0 0; color: var(--text-secondary);"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Section -->
+        <!-- API INTEGRATION: Fetch all ticket types for this event -->
+        <!-- SQL QUERY:
+             SELECT ticket_id, ticket_type, price, quantity_available
+             FROM TICKET
+             WHERE event_id = ?
+             ORDER BY price ASC
+        -->
+        <div class="tickets-section">
+            <h2 style="margin: 0 0 24px 0; color: var(--text);">Select Tickets</h2>
+            <div id="ticketOptions">
+                <!-- Ticket options will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 TixMaster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script src="event-details.js"></script>
+</body>
+</html>

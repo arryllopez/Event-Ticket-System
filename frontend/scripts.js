@@ -303,15 +303,31 @@ function renderEvents(events) {
 // API Integration Functions
 // ============================================================
 
-// Fetch events from your API
+// API INTEGRATION: Fetch featured/upcoming events from database
+// SQL QUERY:
+//   SELECT e.event_id, e.event_name, e.event_date, e.description, e.status,
+//          v.venue_name, v.city, v.address,
+//          c.category_name,
+//          MIN(t.price) as min_price
+//   FROM EVENT e
+//   JOIN VENUE v ON e.venue_id = v.venue_id
+//   JOIN CATEGORY c ON e.category_id = c.category_id
+//   JOIN TICKET t ON e.event_id = t.event_id
+//   WHERE e.event_date >= CURRENT_DATE AND e.status = 'Upcoming'
+//   GROUP BY e.event_id
+//   ORDER BY e.event_date ASC
+//   LIMIT 6
 async function fetchEventsFromAPI() {
   try {
-    // Show loading state
     const eventsGrid = document.getElementById('eventsGrid');
     eventsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Loading events...</p>';
     
-    // TODO: Uncomment this when your API is ready
-    // const events = await fetchUpcomingEvents();
+    // ===== API INTEGRATION POINT =====
+    // TODO: Replace sample data with actual API call
+    // const response = await fetch('YOUR_API_URL/api/events?limit=6&status=Upcoming');
+    // if (!response.ok) throw new Error('Failed to fetch events');
+    // const events = await response.json();
+    // ===== END API INTEGRATION POINT =====
     
     // For now, use sample data
     const events = sampleEventsData;
@@ -324,14 +340,24 @@ async function fetchEventsFromAPI() {
   }
 }
 
-// View event details with ticket information
+// API INTEGRATION: Fetch event by ID with full ticket information
+// SQL QUERY:
+//   SELECT e.*, v.*, c.*,
+//          t.ticket_id, t.ticket_type, t.price, t.quantity_available
+//   FROM EVENT e
+//   JOIN VENUE v ON e.venue_id = v.venue_id
+//   JOIN CATEGORY c ON e.category_id = c.category_id
+//   LEFT JOIN TICKET t ON e.event_id = t.event_id
+//   WHERE e.event_id = ?
 async function viewEvent(eventId) {
   try {
-    // TODO: Fetch full event details including all ticket types
-    // const eventDetails = await fetchEventById(eventId);
-    // const tickets = await fetchTicketsByEvent(eventId);
+    // ===== API INTEGRATION POINT =====
+    // TODO: Replace with actual API call
+    // const response = await fetch(`YOUR_API_URL/api/events/${eventId}`);
+    // if (!response.ok) throw new Error('Event not found');
+    // const event = await response.json();
+    // ===== END API INTEGRATION POINT =====
     
-    // For now, find from sample data
     const event = sampleEventsData.find(e => e.event_id === eventId);
     
     if (!event) {
@@ -339,26 +365,115 @@ async function viewEvent(eventId) {
       return;
     }
     
-    // Build ticket options display
-    const ticketOptions = event.tickets.map(ticket => 
-      `${ticket.ticket_type}: $${ticket.price.toFixed(2)} (${ticket.quantity_available} available)`
-    ).join('\n');
+    // Navigate to event details page
+    window.location.href = `event-details.html?id=${eventId}`;
     
-    // Display event information
-    alert(
-      `Event: ${event.event_name}\n\n` +
-      `Date: ${formatEventDate(event.event_date)}\n` +
-      `Venue: ${event.venue.venue_name}, ${event.venue.city}\n` +
-      `Category: ${event.category.category_name}\n\n` +
-      `Ticket Options:\n${ticketOptions}\n\n` +
-      `Connect this to your database to enable real purchasing!`
-    );
-    
-    // TODO: Navigate to event details page or open modal
-    // window.location.href = `event-details.html?id=${eventId}`;
   } catch (error) {
     console.error('Error viewing event:', error);
     alert('Failed to load event details. Please try again.');
+  }
+}
+
+// API INTEGRATION: Search events with filters
+// SQL QUERY:
+//   SELECT e.*, v.venue_name, v.city, c.category_name, MIN(t.price) as min_price
+//   FROM EVENT e
+//   JOIN VENUE v ON e.venue_id = v.venue_id
+//   JOIN CATEGORY c ON e.category_id = c.category_id
+//   JOIN TICKET t ON e.event_id = t.event_id
+//   WHERE (e.event_name LIKE '%?%' OR e.description LIKE '%?%')
+//     AND (v.city = ? OR ? IS NULL)
+//     AND (e.event_date >= ? OR ? IS NULL)
+//   GROUP BY e.event_id
+//   ORDER BY e.event_date ASC
+async function searchEvents() {
+  const searchInput = document.getElementById('searchInput');
+  const locationFilter = document.getElementById('locationFilter');
+  const dateFilter = document.getElementById('dateFilter');
+  
+  const searchTerm = searchInput.value.trim();
+  const location = locationFilter.value;
+  const dateRange = dateFilter.value;
+  
+  try {
+    // ===== API INTEGRATION POINT =====
+    // TODO: Replace with actual API call
+    // const queryParams = new URLSearchParams({
+    //   q: searchTerm,
+    //   location: location,
+    //   date: dateRange
+    // });
+    // const response = await fetch(`YOUR_API_URL/api/events/search?${queryParams}`);
+    // if (!response.ok) throw new Error('Search failed');
+    // const events = await response.json();
+    // ===== END API INTEGRATION POINT =====
+    
+    // For now, filter sample data
+    let filteredEvents = sampleEventsData;
+    
+    if (searchTerm) {
+      filteredEvents = filteredEvents.filter(event => 
+        event.event_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.category.category_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    if (location) {
+      filteredEvents = filteredEvents.filter(event => 
+        event.venue.city === location
+      );
+    }
+    
+    renderEvents(filteredEvents);
+  } catch (error) {
+    console.error('Search error:', error);
+    alert('Search failed. Please try again.');
+  }
+}
+
+// API INTEGRATION: Quick search by keyword (popular tags)
+async function quickSearch(keyword) {
+  const searchInput = document.getElementById('searchInput');
+  searchInput.value = keyword;
+  await searchEvents();
+}
+
+// API INTEGRATION: Fetch category counts for homepage
+// SQL QUERY:
+//   SELECT c.category_name, COUNT(e.event_id) as event_count
+//   FROM CATEGORY c
+//   LEFT JOIN EVENT e ON c.category_id = e.category_id AND e.status = 'Upcoming'
+//   GROUP BY c.category_id, c.category_name
+async function loadCategoryCounts() {
+  try {
+    // ===== API INTEGRATION POINT =====
+    // TODO: Replace with actual API call
+    // const response = await fetch('YOUR_API_URL/api/categories/counts');
+    // if (!response.ok) throw new Error('Failed to fetch categories');
+    // const categories = await response.json();
+    // ===== END API INTEGRATION POINT =====
+    
+    // For now, use sample counts
+    const categoryCounts = {
+      'Concerts': 1234,
+      'Sports': 892,
+      'Theater': 456,
+      'Comedy': 234,
+      'Conferences': 567,
+      'Festivals': 189
+    };
+    
+    // Update category counts on the page
+    document.getElementById('concertsCount').textContent = `${categoryCounts.Concerts} events`;
+    document.getElementById('sportsCount').textContent = `${categoryCounts.Sports} events`;
+    document.getElementById('theaterCount').textContent = `${categoryCounts.Theater} events`;
+    document.getElementById('comedyCount').textContent = `${categoryCounts.Comedy} events`;
+    document.getElementById('conferencesCount').textContent = `${categoryCounts.Conferences} events`;
+    document.getElementById('festivalsCount').textContent = `${categoryCounts.Festivals} events`;
+    
+  } catch (error) {
+    console.error('Error loading category counts:', error);
   }
 }
 
@@ -373,41 +488,9 @@ function setupSearch() {
   const locationSelect = document.querySelectorAll('.filter-select')[0];
   const dateSelect = document.querySelectorAll('.filter-select')[1];
   
-  async function performSearch() {
-    const searchTerm = searchInput.value.trim();
-    const location = locationSelect.value;
-    const dateFilter = dateSelect.value;
-    
-    try {
-      // TODO: Implement API search when backend is ready
-      // const results = await searchEvents(searchTerm, location, dateFilter);
-      
-      // For now, filter sample data
-      let filteredEvents = sampleEventsData;
-      
-      if (searchTerm) {
-        filteredEvents = filteredEvents.filter(event => 
-          event.event_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.category.category_name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-      
-      if (location !== 'All Locations') {
-        filteredEvents = filteredEvents.filter(event => 
-          event.venue.city === location.split(',')[0]
-        );
-      }
-      
-      renderEvents(filteredEvents);
-    } catch (error) {
-      console.error('Search error:', error);
-    }
-  }
-  
-  searchButton.addEventListener('click', performSearch);
+  searchButton.addEventListener('click', searchEvents);
   searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') performSearch();
+    if (e.key === 'Enter') searchEvents();
   });
 }
 
@@ -451,8 +534,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load events on page load
   fetchEventsFromAPI();
   
+  // Load category counts
+  loadCategoryCounts();
+  
   // Setup search functionality
   setupSearch();
   
-  console.log('TicketHub initialized. Connect to your database API in api-config.js!');
+  console.log('TixMaster initialized. Connect to your database API in api-config.js!');
 });

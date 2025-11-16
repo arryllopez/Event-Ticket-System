@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Events - TixMaster</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
+                        <path d="M8 12h8"/>
+                        <path d="M8 16h8"/>
+                    </svg>
+                    <span class="logo-text">TixMaster</span>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
+                    <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Hero -->
+    <section class="hero" style="padding: 40px 0;">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title" id="categoryTitle" style="font-size: 36px;">
+                    All Events
+                </h1>
+                <p class="hero-description" id="categoryDescription">
+                    Browse all upcoming events
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section style="padding: 20px 0; background: white;">
+        <div class="container">
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+                <!-- API INTEGRATION: Sort dropdown -->
+                <select id="sortFilter" class="filter-select" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                    <option value="date-asc">Date: Soonest First</option>
+                    <option value="date-desc">Date: Latest First</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
+
+                <!-- API INTEGRATION: Location filter -->
+                <select id="locationFilterPage" class="filter-select" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                    <option value="">All Locations</option>
+                    <option value="Toronto">Toronto, ON</option>
+                    <option value="Mississauga">Mississauga, ON</option>
+                    <option value="Oshawa">Oshawa, ON</option>
+                </select>
+
+                <!-- API INTEGRATION: Date range filter -->
+                <select id="dateFilterPage" class="filter-select" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                    <option value="">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="year">This Year</option>
+                </select>
+
+                <button class="btn-primary" onclick="applyFilters()" style="padding: 12px 24px;">Apply Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Grid -->
+    <section class="featured-section">
+        <div class="container">
+            <!-- API INTEGRATION: Results count -->
+            <p id="resultsCount" style="color: var(--text-secondary); margin-bottom: 24px;">
+                Loading events...
+            </p>
+
+            <!-- API INTEGRATION: Events will be populated here by script -->
+            <!-- SQL QUERY:
+                 SELECT e.*, v.venue_name, v.city, c.category_name, MIN(t.price) as min_price
+                 FROM EVENT e
+                 JOIN VENUE v ON e.venue_id = v.venue_id
+                 JOIN CATEGORY c ON e.category_id = c.category_id
+                 JOIN TICKET t ON e.event_id = t.event_id
+                 WHERE (c.category_name = ? OR ? = 'All')
+                   AND (v.city = ? OR ? IS NULL)
+                   AND (e.event_date BETWEEN ? AND ? OR ? IS NULL)
+                 GROUP BY e.event_id
+                 ORDER BY [sort_field] [sort_direction]
+            -->
+            <div class="events-grid" id="categoryEventsGrid">
+                <!-- Events will be dynamically loaded here -->
+            </div>
+
+            <!-- No results message -->
+            <div id="noResults" style="display: none; text-align: center; padding: 60px 20px;">
+                <h3 style="color: var(--text); margin-bottom: 12px;">No events found</h3>
+                <p style="color: var(--text-secondary);">Try adjusting your filters or check back later for new events.</p>
+                <button class="btn-primary" onclick="window.location.href='index.html'" style="margin-top: 24px;">Back to Home</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p class="copyright">© 2025 TixMaster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script src="category.js"></script>
+</body>
+</html>
