@@ -14,23 +14,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const password = document.getElementById("password").value.trim();
 
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+            // Use the correct API helper
+            const data = await loginCustomer(email, password);
 
-            const data = await res.json();
-
-            if (!res.ok) {
-                msg.textContent = data.error || "Login failed.";
+            if (!data || !data.token) {
+                msg.textContent = "Login failed.";
                 return;
             }
 
-            // Save token
-            saveToken(data.token);
-
-            // Fetch user info
+            // Fetch /me using the stored token
             const user = await fetchCurrentUser();
 
             if (!user) {
@@ -38,8 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Redirect to homepage
-            window.location.href = "index.html";
+            // Redirect based on role
+            if (user.role === "admin") {
+                window.location.href = "admin-dashboard.html";
+            } else {
+                window.location.href = "index.html";
+            }
 
         } catch (err) {
             msg.textContent = "Network error. Try again.";
@@ -47,3 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+

@@ -21,7 +21,7 @@ def get_event_by_id(event_id):
         "category": {
             "category_id": event.category.category_id,
             "category_name": event.category.category_name
-        } if event.category else None,
+        } if event.category_id else None,
         "venue": {
             "venue_id": event.venue.venue_id,
             "venue_name": event.venue.venue_name,
