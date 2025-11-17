@@ -96,18 +96,23 @@ def login():
 @auth_bp.route("/me", methods=["GET"])
 @jwt_required()
 def me():
-    """
-    Return current logged-in user info (id + role).
-    """
-    identity = get_jwt_identity()  # customer_id as string
-    claims = get_jwt()  # includes role
+    from backend.models.customer import Customer
 
-    return jsonify(
-        {
-            "customer_id": int(identity),
-            "role": claims.get("role"),
-        }
-    )
+    identity = int(get_jwt_identity())
+
+    user = Customer.query.get(identity)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "customer_id": user.customer_id,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
+        "role": user.role,
+        "registration_date": user.registration_date.strftime("%Y-%m-%d")
+    })
+
 
 
 @auth_bp.route("/admin-test", methods=["GET"])

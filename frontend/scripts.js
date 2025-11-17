@@ -1,9 +1,9 @@
 // ============================================================
 // GLOBAL CONFIG
 // ============================================================
-const API_BASE = "http://127.0.0.1:5000/api";
+const API_BASE = window.API_BASE || "http://127.0.0.1:5000/api";
 
-// Helper to format date
+// Helper to format dates
 function formatEventDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
@@ -13,13 +13,11 @@ function formatEventDate(dateString) {
   });
 }
 
-// Minimum price from ticket array
 function getMinPrice(tickets) {
   if (!tickets || tickets.length === 0) return 0;
   return Math.min(...tickets.map(t => parseFloat(t.price)));
 }
 
-// Placeholder images by category
 function getEventImage(categoryName) {
   const map = {
     Concert: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800",
@@ -76,7 +74,7 @@ function renderEvents(events) {
 }
 
 // ============================================================
-// FEATURED EVENTS
+// FETCH EVENTS (HOME PAGE)
 // ============================================================
 async function fetchEventsFromAPI() {
   const grid = document.getElementById("eventsGrid");
@@ -86,9 +84,7 @@ async function fetchEventsFromAPI() {
     const res = await fetch(`${API_BASE}/events/`);
     const events = await res.json();
 
-    const upcoming = events.sort(
-      (a, b) => new Date(a.event_date) - new Date(b.event_date)
-    );
+    const upcoming = events.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
 
     for (let event of upcoming) {
       const tRes = await fetch(`${API_BASE}/event-tickets/${event.event_id}`);
@@ -108,14 +104,14 @@ async function fetchEventsFromAPI() {
 }
 
 // ============================================================
-// VIEW EVENT DETAILS
+// VIEW EVENT
 // ============================================================
 function viewEvent(id) {
   window.location.href = `event-details.html?id=${id}`;
 }
 
 // ============================================================
-// *** SEARCH + FILTERS (UPDATED) ***
+// SEARCH + FILTERS (WITH QUICK SEARCH RESTORED)
 // ============================================================
 async function searchEvents() {
   const q = document.getElementById("searchInput").value;
@@ -134,14 +130,13 @@ async function searchEvents() {
   renderEvents(data);
 }
 
-// Quick search on popular tags
 function quickSearch(keyword) {
   document.getElementById("searchInput").value = keyword;
   searchEvents();
 }
 
 // ============================================================
-// LOAD CATEGORY COUNTS
+// CATEGORY COUNTS
 // ============================================================
 async function loadCategoryCounts() {
   const res = await fetch(`${API_BASE}/categories/`);
@@ -172,9 +167,14 @@ async function loadCategoryCounts() {
 document.addEventListener("DOMContentLoaded", () => {
   fetchEventsFromAPI();
   loadCategoryCounts();
+  updateAuthUI();
 
-  // Support pressing "Enter" in search bar
   document.getElementById("searchInput").addEventListener("keypress", e => {
     if (e.key === "Enter") searchEvents();
   });
 });
+
+// EXPORT for debugging if needed
+window.quickSearch = quickSearch;
+window.searchEvents = searchEvents;
+window.viewEvent = viewEvent;

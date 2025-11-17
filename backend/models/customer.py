@@ -2,6 +2,7 @@
 
 from datetime import datetime, date
 from backend.db import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Category(db.Model):
@@ -56,7 +57,6 @@ class Event(db.Model):
         default="Upcoming",
     )
 
-    # Relationships
     category = db.relationship("Category", backref=db.backref("events", lazy=True))
     venue = db.relationship("Venue", backref=db.backref("events", lazy=True))
     tickets = db.relationship("Ticket", backref="event", lazy=True)
@@ -69,21 +69,11 @@ class Ticket(db.Model):
     __tablename__ = "ticket"
 
     ticket_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    event_id = db.Column(
-        db.Integer,
-        db.ForeignKey("event.event_id"),
-        nullable=False,
-    )
+    event_id = db.Column(db.Integer, db.ForeignKey("event.event_id"), nullable=False)
 
-    # FROM SCHEMA:
-    # ticket_type VARCHAR(50) NOT NULL,
-    # price DECIMAL(10, 2) NOT NULL,
-    # quantity_available INT NOT NULL
     ticket_type = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     quantity_available = db.Column(db.Integer, nullable=False)
-
-    # NOTE: NO seat_number column here — matches your DB exactly.
 
     def __repr__(self):
         return f"<Ticket {self.ticket_type} for event {self.event_id}>"
@@ -98,9 +88,7 @@ class Customer(db.Model):
 
     email = db.Column(db.String(100), unique=True, nullable=False)
 
-    # From your ALTER TABLE:
-    # password_hash VARCHAR(255) NOT NULL
-    # role VARCHAR(20) NOT NULL DEFAULT 'user'
+    # Uses your schema fields
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="user")
 
@@ -108,6 +96,15 @@ class Customer(db.Model):
     registration_date = db.Column(db.Date, nullable=False, default=date.today)
 
     purchases = db.relationship("Purchase", backref="customer", lazy=True)
+
+    # 🔥 ADD PASSWORD HANDLING METHODS (this fixes your issue)
+    def set_password(self, password):
+        """Hash and store password."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verify password match."""
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return f"<Customer {self.email}>"
@@ -118,16 +115,10 @@ class Purchase(db.Model):
 
     purchase_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     customer_id = db.Column(
-        db.Integer,
-        db.ForeignKey("customer.customer_id"),
-        nullable=False,
+        db.Integer, db.ForeignKey("customer.customer_id"), nullable=False
     )
 
-    purchase_date = db.Column(
-        db.DateTime,
-        nullable=False,
-        default=datetime.utcnow,
-    )
+    purchase_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
 
@@ -152,24 +143,13 @@ class PurchaseTicket(db.Model):
     __tablename__ = "purchase_ticket"
 
     purchase_ticket_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    purchase_id = db.Column(
-        db.Integer,
-        db.ForeignKey("purchase.purchase_id"),
-        nullable=False,
-    )
-    ticket_id = db.Column(
-        db.Integer,
-        db.ForeignKey("ticket.ticket_id"),
-        nullable=False,
-    )
+    purchase_id = db.Column(db.Integer, db.ForeignKey("purchase.purchase_id"), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.ticket_id"), nullable=False)
 
     quantity = db.Column(db.Integer, nullable=False)
     subtotal = db.Column(db.Numeric(10, 2), nullable=False)
 
-    ticket = db.relationship(
-        "Ticket",
-        backref=db.backref("purchase_links", lazy=True),
-    )
+    ticket = db.relationship("Ticket", backref=db.backref("purchase_links", lazy=True))
 
     __table_args__ = (
         db.UniqueConstraint("purchase_id", "ticket_id", name="uq_purchase_ticket_purchase_id_ticket_id"),

@@ -1,47 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TixMaster – Login</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <title>Sign In - TixMaster</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="container header-content">
-      <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
-          <path d="M8 12h8"/>
-          <path d="M8 16h8"/>
-        </svg>
-        <span class="logo-text">TixMaster</span>
-      </div>
-    </div>
-  </header>
 
-  <main class="container" style="max-width:480px;padding:40px 16px;">
-    <h1>Sign In</h1>
-    <p style="margin-bottom:24px;color:var(--text-secondary);">
-      Log in to manage your tickets and purchases.
+<div class="container" style="max-width: 400px; margin: 80px auto;">
+    <h2 style="text-align:center; margin-bottom: 20px;">Sign In</h2>
+
+    <form id="loginForm" style="display:flex; flex-direction:column; gap:14px;">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+
+        <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+
+    <p id="loginMessage" style="margin-top:20px; text-align:center; color:red;"></p>
+
+    <!-- Register redirect -->
+    <p style="text-align:center; margin-top:20px;">
+        Don't have an account?
+        <a href="register.html" style="color:#0066ff; text-decoration:underline;">
+            Create one here
+        </a>
     </p>
+</div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" class="input" placeholder="you@example.com" />
-    </div>
+<script src="api-config.js"></script>
+<script src="auth.js"></script>
+<script src="login.js"></script>
 
-    <div class="form-group" style="margin-top:16px;">
-      <label for="password">Password</label>
-      <input id="password" type="password" class="input" placeholder="••••••••" />
-    </div>
 
-    <button class="btn-primary" style="margin-top:24px;width:100%;" onclick="loginUser()">
-      Sign In
-    </button>
 
-    <p id="loginError" style="margin-top:12px;color:red;display:none;"></p>
-  </main>
-
-  <script src="login.js"></script>
 </body>
 </html>

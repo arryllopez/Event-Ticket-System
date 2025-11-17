@@ -10,48 +10,38 @@
 <body>
     <!-- Header -->
     <header class="header" id="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
-                        <path d="M8 12h8"/>
-                        <path d="M8 16h8"/>
-                    </svg>
-                    <span class="logo-text">TixMaster</span>
-                </div>
-
-                <div class="header-actions">
-                    <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
-                    <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
-                </div>
-
-                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"/>
-                        <line x1="3" y1="12" x2="21" y2="12"/>
-                        <line x1="3" y1="18" x2="21" y2="18"/>
-                    </svg>
-                    <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
+    <div class="container">
+        <div class="header-content">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
+                    <path d="M8 12h8"/>
+                    <path d="M8 16h8"/>
+                </svg>
+                <span class="logo-text">TixMaster</span>
             </div>
 
-            <nav class="mobile-nav" id="mobileNav">
-                <a href="category.html?category=All" class="mobile-nav-link">Events</a>
-                <a href="category.html?category=Sports" class="mobile-nav-link">Sports</a>
-                <a href="category.html?category=Concert" class="mobile-nav-link">Concerts</a>
-                <a href="category.html?category=Theater" class="mobile-nav-link">Theater</a>
+            <div class="header-actions" id="authButtons">
+                <!-- JS will replace this content depending on login -->
+                <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
+                <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
+            </div>
 
-                <div class="mobile-nav-actions">
-                    <button class="btn-secondary full-width" onclick="window.location.href='login.html'">Sign In</button>
-                    <button class="btn-primary full-width" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
-                </div>
-            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
         </div>
-    </header>
+    </div>
+</header>
+
 
     <!-- Hero Section -->
     <section class="hero">
@@ -232,9 +222,15 @@
         </div>
     </section>
 
-    <!-- How It Works, Footer, etc. remain unchanged -->
+   
 
-    <script src="api-config.js"></script>
-    <script src="scripts.js"></script>
+   <script src="api-config.js"></script>
+<script src="auth.js"></script>
+<script src="scripts.js"></script>
+
+
+
+    
+
 </body>
 </html>
