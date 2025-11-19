@@ -36,6 +36,8 @@ async function loadEventDetails() {
     EVENT_DETAILS_CACHE = { ...event, category, venue, tickets };
 
     displayEventDetails(EVENT_DETAILS_CACHE);
+    displayTotalTicketsSold(EVENT_DETAILS_CACHE);
+ // NEW: Show total tickets sold
     loadTicketOptions(EVENT_DETAILS_CACHE.tickets);
 
   } catch (err) {
@@ -44,6 +46,7 @@ async function loadEventDetails() {
     window.location.href = "index.html";
   }
 }
+
 
 // -------------------------------
 // Display Event Details
@@ -81,6 +84,20 @@ function displayEventDetails(event) {
     event.organizer_name || "Organizer";
 }
 
+
+// -------------------------------
+// Display Total Tickets Sold  (NEW FUNCTION)
+// -------------------------------
+function displayTotalTicketsSold(event) {
+  if (!event) return;
+
+  const totalSold = event.tickets_sold || 0;
+
+  document.getElementById("totalTicketsSold").textContent = totalSold;
+}
+
+
+
 // -------------------------------
 // Ticket Options
 // -------------------------------
@@ -113,6 +130,10 @@ function loadTicketOptions(tickets) {
     )
     .join("");
 }
+
+// ... rest of the script unchanged ...
+
+
 
 // ============================================================
 // ADD TO CART
@@ -169,3 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadEventDetails();
   setTimeout(updateCartIcon, 300); // small delay so navbar loads first
 });
+
+
+

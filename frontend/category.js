@@ -94,6 +94,14 @@ function sortEvents(events, sortOption) {
       return sorted.sort((a, b) => getMinPrice(b.tickets) - getMinPrice(a.tickets));
     case "name-asc":
       return sorted.sort((a, b) => a.event_name.localeCompare(b.event_name));
+    case "tickets-sold-desc":
+      return sorted.sort((a, b) => {
+        const aSold = a.tickets ? a.tickets.reduce((sum, t) => sum + (t.sold || 0), 0) : 0;
+        const bSold = b.tickets ? b.tickets.reduce((sum, t) => sum + (t.sold || 0), 0) : 0;
+      return bSold - aSold;
+    });
+    case "category-tickets-sold-desc":
+      return sortByCategoryTicketsSold(events);
     default:
       return sorted;
   }
@@ -154,6 +162,52 @@ function renderEventCards(events) {
     .join("");
 }
 
+function aggregateTicketsSoldByCategory(events) {
+  const categoryTicketsMap = new Map();
+
+  events.forEach(event => {
+    const catName = event.category?.category_name || "Uncategorized";
+    // Sum total sold tickets per event, assuming tickets array has sold property or fallback 0
+    const ticketsSold = event.tickets ? event.tickets.reduce((sum, t) => sum + (t.sold || 0), 0) : 0;
+
+    categoryTicketsMap.set(catName, (categoryTicketsMap.get(catName) || 0) + ticketsSold);
+  });
+
+  return categoryTicketsMap;
+}
+
+
+function sortByCategoryTicketsSold(events) {
+  // Get total tickets sold per category
+  const categorySales = aggregateTicketsSoldByCategory(events);
+
+  // Sort all events so those with categories having higher total sold come first
+  return [...events].sort((a, b) => {
+    const aCat = a.category?.category_name || "Uncategorized";
+    const bCat = b.category?.category_name || "Uncategorized";
+
+    // Descending sort by total tickets sold in the category
+    return (categorySales.get(bCat) || 0) - (categorySales.get(aCat) || 0);
+  });
+}
+
+
+
+async function loadUpcomingLowTickets() {
+  const events = await fetchAllEvents(); // fetch all events with tickets data
+  const filteredEvents = events.filter(e => {
+    const remaining = e.tickets.reduce(
+      (sum, t) => sum + (t.quantity_available - (t.tickets_sold || 0)),
+      0
+    );
+    // Check remaining tickets and future date
+    return remaining <= 500 && new Date(e.event_date) > new Date();
+  });
+  renderEventCards(filteredEvents); // or adapt to your render function
+}
+
+
+
 // ============================================================
 // MAIN LOAD FUNCTION
 // ============================================================
@@ -168,10 +222,26 @@ async function loadCategoryEvents() {
 
   const events = await fetchAllEvents();
 
+  // Basic filtering by category, location, and date
   let filtered = filterByCategory(events, category);
   filtered = filterByLocation(filtered, location);
   filtered = filterByDate(filtered, dateRange);
-  filtered = sortEvents(filtered, sort);
+
+  // Special case for running out of tickets filter
+  if (sort === "low-tickets-remaining") {
+    filtered = filtered.filter(e => {
+      const remainingTickets = e.tickets.reduce(
+        (sum, t) => sum + (t.quantity_available - (t.sold || 0)),
+        0
+      );
+      const eventDate = new Date(e.event_date);
+      const now = new Date();
+      return remainingTickets <= 500 && eventDate >= now;
+    });
+  } else {
+    // Regular sorting
+    filtered = sortEvents(filtered, sort);
+  }
 
   renderEventCards(filtered);
 }

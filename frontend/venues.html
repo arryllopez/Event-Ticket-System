@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Venues - TixMaster</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Basic styling for venue cards and page structure */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    .venues-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .venues-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .venue-card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .venue-card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .venue-info p {
+      margin: 6px 0;
+      color: var(--text-secondary);
+    }
+    .sort-select {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      min-width: 220px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" id="header">
+    <div class="container">
+        <div class="header-content">
+
+            <!-- LOGO -->
+            <div class="logo" onclick="window.location.href='index.html'">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
+                    <path d="M8 12h8"/>
+                    <path d="M8 16h8"/>
+                </svg>
+                <span class="logo-text">TixMaster</span>
+            </div>
+
+            <!-- RIGHT SIDE WRAPPER -->
+            <div class="header-actions">
+
+
+
+
+                <div id="cartIcon" class="cart-icon" onclick="window.location.href='cart.html'" 
+                     style="display:none; cursor:pointer; margin-left: 12px;">
+                    🛒 <span id="cartCount">0</span>
+                </div>
+
+
+                <!-- Weather always visible -->
+                <div id="weatherWidget" class="weather-widget">
+                    <span id="weatherCity">Loading...</span>
+                    <span id="weatherTemp"></span>
+                    <img id="weatherIcon" style="width: 26px; height: 26px;">
+                </div>
+
+                
+
+                <!-- Auth buttons injected by navbar.js -->
+                <div id="authButtons" class="auth-area"></div>
+
+            </div> <!-- END header-actions -->
+
+            <!-- Mobile menu toggle button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+
+        </div> <!-- END header-content -->
+    </div> <!-- END container -->
+</header>
+
+  <main class="container">
+    <div class="venues-header">
+      <h1>Venues</h1>
+      <select id="venueSortSelect" class="sort-select" aria-label="Sort Venues">
+        <option value="tickets-desc">Tickets Sold (High to Low)</option>
+        <option value="tickets-asc">Tickets Sold (Low to High)</option>
+        <option value="events-desc">Number of Events (High to Low)</option>
+        <option value="events-asc">Number of Events (Low to High)</option>
+        <option value="name-asc">Venue Name (A to Z)</option>
+        <option value="name-desc">Venue Name (Z to A)</option>
+      </select>
+    </div>
+
+    <div id="venuesGrid" class="venues-grid">
+      <!-- Venue cards rendered here -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <!-- Include your footer here -->
+  </footer>
+
+  <script src="api-config.js"></script>
+  <script src="navbar.js"></script>
+
+  <script>
+    // Fetch and aggregate venues data from events + tickets
+    async function fetchAllEvents() {
+      const response = await fetch(`http://127.0.0.1:5000/api/events/`);
+      const events = await response.json();
+
+      for (let e of events) {
+        const detail = await (await fetch(`http://127.0.0.1:5000/api/events/${e.event_id}`)).json();
+        e.category = detail.category;
+        e.venue = detail.venue;
+        e.tickets = await (await fetch(`http://127.0.0.1:5000/api/event-tickets/${e.event_id}`)).json();
+      }
+      return events;
+    }
+
+    function aggregateVenues(events) {
+      const venueMap = new Map();
+
+      events.forEach(event => {
+        const venueId = event.venue?.venue_id;
+        if (!venueId) return;
+
+        if (!venueMap.has(venueId)) {
+          venueMap.set(venueId, {
+            venue_id: venueId,
+            venue_name: event.venue?.venue_name || "Unknown Venue",
+            city: event.venue?.city || "Unknown City",
+            eventsCount: 0,
+            totalTicketsSold: 0
+          });
+        }
+
+        const v = venueMap.get(venueId);
+        v.eventsCount += 1;
+        const ticketsSold = event.tickets_sold || 0;
+v.totalTicketsSold += ticketsSold;
+
+      });
+
+      return Array.from(venueMap.values());
+    }
+
+    function renderVenues(venues) {
+      const container = document.getElementById("venuesGrid");
+      container.innerHTML = venues.map(v => `
+        <div class="venue-card">
+          <h3>${v.venue_name}</h3>
+          <div class="venue-info">
+            <p><strong>Venue ID:</strong> ${v.venue_id}</p>
+            <p><strong>City:</strong> ${v.city}</p>
+            <p><strong>Events Held:</strong> ${v.eventsCount}</p>
+            <p><strong>Total Tickets Sold:</strong> ${v.totalTicketsSold}</p>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function sortVenues(venues, criteria) {
+      switch(criteria) {
+        case "tickets-desc":
+          return venues.sort((a,b) => b.totalTicketsSold - a.totalTicketsSold);
+        case "tickets-asc":
+          return venues.sort((a,b) => a.totalTicketsSold - b.totalTicketsSold);
+        case "events-desc":
+          return venues.sort((a,b) => b.eventsCount - a.eventsCount);
+        case "events-asc":
+          return venues.sort((a,b) => a.eventsCount - b.eventsCount);
+        case "name-asc":
+          return venues.sort((a,b) => a.venue_name.localeCompare(b.venue_name));
+        case "name-desc":
+          return venues.sort((a,b) => b.venue_name.localeCompare(a.venue_name));
+        default:
+          return venues;
+      }
+    }
+
+    async function loadVenuesPage() {
+      const events = await fetchAllEvents();
+      let venues = aggregateVenues(events);
+
+      const sortSelect = document.getElementById("venueSortSelect");
+
+      function onSortChange() {
+        venues = sortVenues(venues, sortSelect.value);
+        renderVenues(venues);
+      }
+
+      sortSelect.addEventListener("change", onSortChange);
+
+      // Initial render
+      onSortChange();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadVenuesPage);
+  </script>
+</body>
+</html>
