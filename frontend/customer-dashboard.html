@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Tickets - TixMaster</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header class="header" id="header">
+      <div class="container">
+        <div class="header-content">
+          <div
+            class="logo"
+            onclick="window.location.href='index.html'"
+            style="cursor: pointer"
+          >
+            <svg
+              class="logo-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"
+              />
+              <path d="M8 12h8" />
+              <path d="M8 16h8" />
+            </svg>
+            <span class="logo-text">TixMaster</span>
+          </div>
+
+          <div class="header-actions">
+            <button
+              class="btn-secondary"
+              onclick="window.location.href='index.html'"
+            >
+              Back to Site
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-container">
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">My Tickets</h1>
+          <p class="admin-subtitle">All tickets you have purchased</p>
+        </div>
+
+        <button id="downloadCSV" class="btn-primary">
+          Download CSV
+        </button>
+      </div>
+
+      <div class="admin-card">
+        <div id="ticketsStatus" style="margin-bottom: 16px;">
+          Loading your purchases...
+        </div>
+
+        <table
+          class="admin-events-table"
+          id="ticketsTable"
+          style="display: none;"
+        >
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Event Date</th>
+              <th>Ticket Type</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+              <th>Purchase Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ticketsTableBody"></tbody>
+        </table>
+
+        <div id="ticketsEmpty" class="admin-empty" style="display: none;">
+          <h3>No tickets found</h3>
+          <p>You have not purchased any tickets yet.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p class="copyright">© 2025 TixMaster. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script src="customer-dashboard.js"></script>
+  </body>
+</html>

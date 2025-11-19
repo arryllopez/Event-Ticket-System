@@ -15,6 +15,9 @@ from backend.routes.purchases import purchases_bp
 from backend.routes.event_details import event_details_bp
 from backend.routes.event_tickets import event_tickets_bp
 from backend.routes.admin_events import admin_bp
+#customer dashboard
+from backend.routes.customer_dashboard import customer_dashboard_bp
+
 
 
 def create_app():
@@ -57,6 +60,10 @@ def create_app():
 
     # ADMIN CRUD
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
+
+    # CUSTOMER DASHBOARD
+    app.register_blueprint(customer_dashboard_bp)
+
 
     @app.route("/")
     def home():

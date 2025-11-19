@@ -17,3 +17,5 @@ def get_customers():
         }
         for c in customers
     ])
+
+

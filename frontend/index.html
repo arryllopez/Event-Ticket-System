@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header" id="header">
+
+<header class="header" id="header">
     <div class="container">
         <div class="header-content">
+
             <div class="logo" onclick="window.location.href='index.html'">
                 <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/>
@@ -21,19 +22,16 @@
                 <span class="logo-text">TixMaster</span>
             </div>
 
-            <div class="header-actions">
+           <div class="header-actions">
 
-    <!-- weather widget stays outside authButtons -->
     <div id="weatherWidget" class="weather-widget">
         <span id="weatherCity">Loading...</span>
         <span id="weatherTemp"></span>
-        <img id="weatherIcon" style="width: 26px; height: 26px;" />
+        <img id="weatherIcon" style="width: 26px; height: 26px;">
     </div>
 
-    <!-- JS will ONLY replace this, weather remains untouched -->
-    <div id="authButtons">
-        <button class="btn-secondary" onclick="window.location.href='login.html'">Sign In</button>
-        <button class="btn-primary" onclick="window.location.href='sell-tickets.html'">Sell Tickets</button>
+    <div id="authButtons" class="auth-area">
+        <!-- navbar.js will inject greeting here -->
     </div>
 
 </div>
@@ -50,200 +48,193 @@
                     <line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
             </button>
+
         </div>
     </div>
 </header>
 
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Find Your Next
+                <span class="hero-title-accent"> Unforgettable Experience</span>
+            </h1>
+            <p class="hero-description">
+                Discover and book tickets to the hottest concerts, sports events, theater shows, and more.
+                Your journey to amazing live experiences starts here.
+            </p>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    Find Your Next
-                    <span class="hero-title-accent"> Unforgettable Experience</span>
-                </h1>
-                <p class="hero-description">
-                    Discover and book tickets to the hottest concerts, sports events, theater shows, and more.
-                    Your journey to amazing live experiences starts here.
-                </p>
-
-                <form id="searchForm" class="search-box" onsubmit="event.preventDefault(); searchEvents();">
-                    <div class="search-field">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Search for events, artists, teams, or venues..." class="search-input" />
-                    </div>
-
-                    <div class="search-filters">
-                        <div class="filter-group">
-                            <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                            <select id="locationFilter" class="filter-select">
-                                <option value="">All Locations</option>
-                                <option value="Toronto">Toronto, ON</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                                <line x1="16" y1="2" x2="16" y2="6"/>
-                                <line x1="8" y1="2" x2="8" y2="6"/>
-                                <line x1="3" y1="10" x2="21" y2="10"/>
-                            </svg>
-                            <select id="dateFilter" class="filter-select">
-                                <option value="">All Dates</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                                <option value="year">This Year</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="search-button">Search</button>
-                    </div>
-                </form>
-
-                <div class="popular-searches">
-                    <span class="popular-label">Popular:</span>
-                    <button class="popular-tag" onclick="quickSearch('Rock Legends Live')">Rock Legends Live</button>
-                    <button class="popular-tag" onclick="quickSearch('Shakespeare Festival')">Shakespeare Festival</button>
-                    <button class="popular-tag" onclick="quickSearch('Comedy Night Special')">Comedy Night Special</button>
-                    <button class="popular-tag" onclick="quickSearch('Jazz Evening')">Jazz Evening</button>
+            <form id="searchForm" class="search-box" onsubmit="event.preventDefault(); searchEvents();">
+                <div class="search-field">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search for events, artists, teams, or venues..." class="search-input" />
                 </div>
+
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <select id="locationFilter" class="filter-select">
+                            <option value="">All Locations</option>
+                            <option value="Toronto">Toronto, ON</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <select id="dateFilter" class="filter-select">
+                            <option value="">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="search-button">Search</button>
+                </div>
+            </form>
+
+            <div class="popular-searches">
+                <span class="popular-label">Popular:</span>
+                <button class="popular-tag" onclick="quickSearch('Rock Legends Live')">Rock Legends Live</button>
+                <button class="popular-tag" onclick="quickSearch('Shakespeare Festival')">Shakespeare Festival</button>
+                <button class="popular-tag" onclick="quickSearch('Comedy Night Special')">Comedy Night Special</button>
+                <button class="popular-tag" onclick="quickSearch('Jazz Evening')">Jazz Evening</button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Featured Events -->
-    <section class="featured-section" id="events">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Featured Events</h2>
-                <p class="section-description">Don't miss out on these incredible upcoming events</p>
-            </div>
-
-            <div class="events-grid" id="eventsGrid"></div>
-
-            <div class="view-all-container">
-                <button class="btn-view-all" onclick="window.location.href='category.html?category=All'">View All Events</button>
-            </div>
+<section class="featured-section" id="events">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Featured Events</h2>
+            <p class="section-description">Don't miss out on these incredible upcoming events</p>
         </div>
-    </section>
 
-    <!-- Categories Section -->
-    <section class="categories-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Browse by Category</h2>
-                <p class="section-description">Explore events across all your favorite categories</p>
-            </div>
+        <div class="events-grid" id="eventsGrid"></div>
 
-            <div class="categories-grid" id="categoriesGrid">
-
-                <!-- Concerts -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Concert'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18V5l12-2v13"/>
-                            <circle cx="6" cy="18" r="3"/>
-                            <circle cx="18" cy="16" r="3"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Concerts</h3>
-                    <p class="category-count" id="concertsCount">Loading...</p>
-                </div>
-
-                <!-- Sports -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Sports'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                            <path d="M4 22h16"/>
-                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Sports</h3>
-                    <p class="category-count" id="sportsCount">Loading...</p>
-                </div>
-
-                <!-- Theater -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Theater'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/>
-                            <line x1="2" y1="20" x2="2.01" y2="20"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Theater</h3>
-                    <p class="category-count" id="theaterCount">Loading...</p>
-                </div>
-
-                <!-- Comedy -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Comedy'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12"/>
-                            <circle cx="17" cy="7" r="5"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Comedy</h3>
-                    <p class="category-count" id="comedyCount">Loading...</p>
-                </div>
-
-                <!-- Conferences (DB = Conference) -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Conference'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
-                            <polyline points="17 2 12 7 7 2"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Conferences</h3>
-                    <p class="category-count" id="conferencesCount">Loading...</p>
-                </div>
-
-                <!-- Festivals (DB = Festival) -->
-                <div class="category-card" onclick="window.location.href='category.html?category=Festival'">
-                    <div class="category-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5.8 11.3 2 22l10.7-3.79"/>
-                            <path d="M4 3h.01"/>
-                            <path d="M22 8h.01"/>
-                            <path d="M15 2h.01"/>
-                            <path d="M22 20h.01"/>
-                            <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12v0c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/>
-                            <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11v0c-.11.7-.72 1.22-1.43 1.22H17"/>
-                            <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98v0C9.52 4.9 9 5.52 9 6.23V7"/>
-                            <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/>
-                        </svg>
-                    </div>
-                    <h3 class="category-name">Festivals</h3>
-                    <p class="category-count" id="festivalsCount">Loading...</p>
-                </div>
-
-            </div>
+        <div class="view-all-container">
+            <button class="btn-view-all" onclick="window.location.href='category.html?category=All'">View All Events</button>
         </div>
-    </section>
+    </div>
+</section>
 
-   
 
-   <script src="api-config.js"></script>
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Browse by Category</h2>
+            <p class="section-description">Explore events across all your favorite categories</p>
+        </div>
+
+        <div class="categories-grid">
+
+            <!-- Concerts -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Concert'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Concerts</h3>
+                <p class="category-count" id="concertsCount">Loading...</p>
+            </div>
+
+            <!-- Sports -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Sports'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Sports</h3>
+                <p class="category-count" id="sportsCount">Loading...</p>
+            </div>
+
+            <!-- Theater -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Theater'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/>
+                        <line x1="2" y1="20" x2="2.01" y2="20"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Theater</h3>
+                <p class="category-count" id="theaterCount">Loading...</p>
+            </div>
+
+            <!-- Comedy -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Comedy'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12"/>
+                        <circle cx="17" cy="7" r="5"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Comedy</h3>
+                <p class="category-count" id="comedyCount">Loading...</p>
+            </div>
+
+            <!-- Conferences -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Conference'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                        <polyline points="17 2 12 7 7 2"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Conferences</h3>
+                <p class="category-count" id="conferencesCount">Loading...</p>
+            </div>
+
+            <!-- Festivals -->
+            <div class="category-card" onclick="window.location.href='category.html?category=Festival'">
+                <div class="category-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5.8 11.3 2 22l10.7-3.79"/>
+                        <path d="M4 3h.01"/>
+                        <path d="M22 8h.01"/>
+                        <path d="M15 2h.01"/>
+                        <path d="M22 20h.01"/>
+                        <path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12v0c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/>
+                        <path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11v0c-.11.7-.72 1.22-1.43 1.22H17"/>
+                        <path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98v0C9.52 4.9 9 5.52 9 6.23V7"/>
+                        <path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/>
+                    </svg>
+                </div>
+                <h3 class="category-name">Festivals</h3>
+                <p class="category-count" id="festivalsCount">Loading...</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<script src="api-config.js"></script>
 <script src="navbar.js"></script>
 <script src="scripts.js"></script>
-
-
-
-
-    
 
 </body>
 </html>

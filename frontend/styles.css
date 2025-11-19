@@ -1033,5 +1033,16 @@ button {
     vertical-align: middle;
 }
 
+.auth-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-greeting {
+    font-weight: 600;
+    color: var(--text);
+}
+
 
 }
