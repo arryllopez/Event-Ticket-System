@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Owner Dashboard - TixMaster</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; }
+    h2 { margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <h1>Owner Dashboard</h1>
+
+  <section>
+    <h2>View 1: Events with Category and Venue</h2>
+    <table id="view1Table">
+      <thead>
+        <tr><th>Event ID</th><th>Name</th><th>Category</th><th>Venue</th><th>City</th><th>Date</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 2: Venues by Total Tickets Sold</h2>
+    <table id="view2Table">
+      <thead>
+        <tr><th>Venue ID</th><th>Name</th><th>City</th><th>Event Count</th><th>Total Tickets Sold</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Add more sections for other views here -->
+
+  <script src="owner-dashboard.js"></script>
+</body>
+</html>
