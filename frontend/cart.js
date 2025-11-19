@@ -18,7 +18,10 @@ function updateCartCount() {
 function renderCart() {
     const cart = getCart();
     const container = document.getElementById("cartContainer");
-    const totalSpan = document.getElementById("cartTotal");
+    const totalSpan =
+    document.getElementById("checkoutTotal") ||
+    document.getElementById("cartTotal");
+
 
     if (cart.length === 0) {
         container.innerHTML = `
@@ -42,7 +45,7 @@ function renderCart() {
                     <h3>${item.ticket_type || "Ticket"}</h3>
                     <p><strong>${item.event_name}</strong></p>
                     <p>Event ID: ${item.event_id}</p>
-                    <p>Price: $${item.price.toFixed(2)}</p>
+                    <p>Price: $${Number(item.price).toFixed(2)}</p>
                     <p>Quantity: ${item.quantity}</p>
                 </div>
 
@@ -66,10 +69,8 @@ function removeFromCart(index) {
     updateCartCount();
 }
 
-// Checkout function
 async function checkout() {
     const cart = getCart();
-
     if (cart.length === 0) {
         alert("Your cart is empty.");
         return;
@@ -77,10 +78,37 @@ async function checkout() {
 
     const token = localStorage.getItem("authToken");
     if (!token) {
-        alert("You must be logged in to checkout.");
         window.location.href = "login.html";
         return;
     }
+
+    // Collect CUSTOMER form fields
+    const customerData = {
+        first_name: document.getElementById("firstName").value.trim(),
+        last_name: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+    };
+
+    const payment_method = document.getElementById("paymentMethod").value;
+
+    // Calculate total
+    const total_amount = cart.reduce((sum, item) => {
+        return sum + item.price * item.quantity;
+    }, 0);
+
+    const payload = {
+        customer: customerData,
+        payment_method,
+        total_amount,
+        items: cart.map(item => ({
+    ticket_id: item.ticket_id,
+    quantity: item.quantity,
+    price: Number(item.price),
+    subtotal: Number(item.price) * Number(item.quantity)
+}))
+
+    };
 
     try {
         const res = await fetch(`${API_BASE_URL}/checkout`, {
@@ -89,7 +117,7 @@ async function checkout() {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ items: cart })
+            body: JSON.stringify(payload)
         });
 
         if (!res.ok) {
@@ -97,16 +125,16 @@ async function checkout() {
             throw new Error(error.msg || "Checkout failed");
         }
 
-        alert("Purchase successful! Tickets added to your dashboard.");
+        alert("Purchase successful!");
 
         localStorage.removeItem("cart");
-        updateCartCount();
         window.location.href = "customer-dashboard.html";
 
     } catch (err) {
-        alert("Checkout failed: " + err.message);
+        alert("Checkout Error: " + err.message);
     }
 }
+
 
 // Init
 document.addEventListener("DOMContentLoaded", () => {

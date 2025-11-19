@@ -86,6 +86,50 @@ async function initCustomerDashboard() {
   }
 }
 
+
+async function loadPurchases() {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    const res = await fetch(`${API_BASE_URL}/my-purchases`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const purchases = await res.json();
+    console.log(purchases);
+
+    renderPurchases(purchases);
+}
+
+function renderPurchases(purchases) {
+    const container = document.getElementById("purchaseHistory");
+
+    if (purchases.length === 0) {
+        container.innerHTML = "<p>No purchases yet.</p>";
+        return;
+    }
+
+    container.innerHTML = purchases.map(p => `
+        <div class="purchase-card">
+            <h3>Purchase #${p.purchase_id}</h3>
+            <p><strong>Date:</strong> ${new Date(p.purchase_date).toLocaleString()}</p>
+            <p><strong>Total:</strong> $${p.total_amount.toFixed(2)}</p>
+            <p><strong>Payment:</strong> ${p.payment_method}</p>
+
+            <h4>Tickets:</h4>
+            <ul>
+                ${p.tickets.map(t => `
+                    <li>${t.ticket_type} — $${t.subtotal.toFixed(2)}</li>
+                `).join("")}
+            </ul>
+        </div>
+    `).join("");
+}
+
+document.addEventListener("DOMContentLoaded", loadPurchases);
+
+
+
 function handleDownloadCSV() {
   window.location.href = `${API_BASE_URL}/customer/purchases/export`;
 }

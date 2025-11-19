@@ -17,6 +17,7 @@ from backend.routes.event_tickets import event_tickets_bp
 from backend.routes.admin_events import admin_bp
 #customer dashboard
 from backend.routes.customer_dashboard import customer_dashboard_bp
+from backend.routes.checkout import checkout_bp
 
 
 
@@ -63,6 +64,9 @@ def create_app():
 
     # CUSTOMER DASHBOARD
     app.register_blueprint(customer_dashboard_bp)
+
+    # CHECKOUT
+    app.register_blueprint(checkout_bp)
 
 
     @app.route("/")
