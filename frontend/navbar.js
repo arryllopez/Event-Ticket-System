@@ -32,3 +32,26 @@ function logout() {
     localStorage.removeItem("authEmail");
     window.location.reload();
 }
+
+
+async function loadNavbarWeather() {
+    const API_KEY = "bb82621cf968e35ce7553f9735f9a69c".trim(); 
+    const city = "Toronto";
+
+    try {
+        const res = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+        );
+        const data = await res.json();
+
+        document.getElementById("weatherCity").textContent = city;
+        document.getElementById("weatherTemp").textContent = `${Math.round(data.main.temp)}°C`;
+        document.getElementById("weatherIcon").src =
+            `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+    } catch (err) {
+        console.error("Weather error:", err);
+        document.getElementById("weatherCity").textContent = "Weather N/A";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadNavbarWeather);

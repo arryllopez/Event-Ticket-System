@@ -1021,4 +1021,17 @@ button {
   background: #555;
 }
 
+.weather-widget {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #fff;
+}
+
+.weather-widget img {
+    vertical-align: middle;
+}
+
+
 }
