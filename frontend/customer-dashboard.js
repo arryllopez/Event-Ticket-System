@@ -130,6 +130,47 @@ document.addEventListener("DOMContentLoaded", loadPurchases);
 
 
 
-function handleDownloadCSV() {
-  window.location.href = `${API_BASE_URL}/customer/purchases/export`;
+async function handleDownloadCSV() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    alert("You must be logged in to download.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/customer/purchases/export`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'text/csv'
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert("Error: " + (errorData.error || "Failed to download CSV"));
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'purchases.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    alert("Error downloading CSV: " + err.message);
+  }
 }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  initCustomerDashboard();
+  const downloadBtn = document.getElementById("downloadCSV");
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", handleDownloadCSV);
+  }
+});

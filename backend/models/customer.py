@@ -96,7 +96,7 @@ class Purchase(db.Model):
     purchase_id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(
         db.Integer,
-        db.ForeignKey("CUSTOMER.customer_id", ondelete="CASCADE"),
+        db.ForeignKey("customer.customer_id", ondelete="CASCADE"),
         nullable=False,
     )
     purchase_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
