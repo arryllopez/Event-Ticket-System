@@ -26,6 +26,7 @@ async function initAdminDashboard() {
 
     const events = await fetchAdminEvents();
     window.adminEvents = events || [];
+    renderSalesChart(window.adminEvents);
 
     if (!events || events.length === 0) {
       statusEl.textContent = "No events found.";
@@ -205,4 +206,51 @@ async function loadVenues() {
   const venues = await apiRequest(`${API_BASE_URL}/venues/`);
   const select = document.getElementById("eventVenue");
   select.innerHTML = venues.map(v => `<option value="${v.venue_id}">${v.venue_name}</option>`).join("");
+}
+
+//chart generation
+
+async function renderSalesChart(events) {
+    const ctx = document.getElementById("salesChart").getContext("2d");
+
+    // remove old chart if exists (prevents error when refreshing)
+    if (window.salesChartInstance) {
+        window.salesChartInstance.destroy();
+    }
+
+    const labels = events.map(e => e.event_name);
+    const soldData = events.map(e => e.tickets_sold);
+    const totalData = events.map(e => e.total_tickets);
+
+    window.salesChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Tickets Sold",
+                    data: soldData,
+                    backgroundColor: "rgba(54, 162, 235, 0.7)"
+                },
+                {
+                    label: "Total Tickets",
+                    data: totalData,
+                    backgroundColor: "rgba(255, 99, 132, 0.7)"
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: "top" },
+                title: {
+                    display: true,
+                    text: "Event Ticket Sales Overview"
+                }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
 }
