@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Discover and purchase tickets to concerts, sports, theater and more" />
+  <title>Dashboard Views - TixMaster</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header" id="header">
+  <div class="container">
+    <div class="header-content">
+      <!-- LOGO -->
+      <div class="logo" onclick="window.location.href='index.html'">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z" />
+          <path d="M8 12h8" />
+          <path d="M8 16h8" />
+        </svg>
+        <span class="logo-text">TixMaster</span>
+      </div>
+
+      <!-- RIGHT SIDE WRAPPER -->
+      <div class="header-actions">
+        <div id="cartIcon" class="cart-icon" onclick="window.location.href='cart.html'" style="display:none; cursor:pointer; margin-left: 12px;">
+          🛒 <span id="cartCount">0</span>
+        </div>
+
+        <!-- Weather always visible -->
+        <div id="weatherWidget" class="weather-widget">
+          <span id="weatherCity">Loading...</span>
+          <span id="weatherTemp"></span>
+          <img id="weatherIcon" style="width: 26px; height: 26px;" />
+        </div>
+
+        <!-- Auth buttons injected by navbar.js -->
+        <div id="authButtons" class="auth-area"></div>
+      </div> <!-- END header-actions -->
+
+      <!-- Mobile menu toggle button -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+        <svg class="close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <h1>Dashboard: Event & Customer Views</h1>
+
+  <section>
+    <h2>View 1: Event Summary</h2>
+    <table id="view1Table">
+      <thead>
+        <tr>
+          <th>Event ID</th>
+          <th>Event Name</th>
+          <th>Category</th>
+          <th>Venue</th>
+          <th>City</th>
+          <th>Event Date</th>
+          <th>Total Tickets</th>
+          <th>Tickets Sold</th>
+          <th>Total Revenue</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 2: Top Venues</h2>
+    <table id="view2Table">
+      <thead>
+        <tr>
+          <th>Venue ID</th>
+          <th>Venue Name</th>
+          <th>City</th>
+          <th>Total Events</th>
+          <th>Total Tickets Sold</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 3: Customers Purchases above Average</h2>
+    <table id="view3Table">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Customer Name</th>
+          <th>Purchase ID</th>
+          <th>Purchase Date</th>
+          <th>Purchase Total</th>
+          <th>Avg Customer Spending</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 4: Customer-Purchase Union</h2>
+    <table id="view4Table">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Purchase ID</th>
+          <th>Purchase Date</th>
+          <th>Total Amount</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 5: Customers Purchased Concert or Sports</h2>
+    <table id="view5Table">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Customer Name</th>
+          <th>Email</th>
+          <th>Event ID</th>
+          <th>Event Name</th>
+          <th>Category Name</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 6: Category Sales Summary</h2>
+    <table id="view6Table">
+      <thead>
+        <tr>
+          <th>Category ID</th>
+          <th>Category Name</th>
+          <th>Total Events</th>
+          <th>Total Tickets Sold</th>
+          <th>Total Revenue</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 7: Events with 500 or Fewer Tickets Remaining</h2>
+    <table id="view7Table">
+      <thead>
+        <tr>
+          <th>Event ID</th>
+          <th>Event Name</th>
+          <th>Category Name</th>
+          <th>Venue Name</th>
+          <th>Event Date</th>
+          <th>Total Tickets</th>
+          <th>Tickets Sold</th>
+          <th>Tickets Remaining</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 8: Upcoming Events with Less Than 70% Tickets Sold</h2>
+    <table id="view8Table">
+      <thead>
+        <tr>
+          <th>Event ID</th>
+          <th>Event Name</th>
+          <th>Category Name</th>
+          <th>Venue Name</th>
+          <th>Event Date</th>
+          <th>Total Tickets</th>
+          <th>Tickets Sold</th>
+          <th>Tickets Remaining</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 9: Customers with More Than One Purchase</h2>
+    <table id="view9Table">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Customer Name</th>
+          <th>Email</th>
+          <th>Category Name</th>
+          <th>Tickets Purchased</th>
+          <th>Total Spent</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>View 10: Customer Spending by Category</h2>
+    <table id="view10Table">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Customer ID</th>
+          <th>Customer Name</th>
+          <th>Email</th>
+          <th>Total Spent</th>
+          <th>Tickets Purchased</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+
+<script src="views-dashboard.js"></script>
+<script src="api-config.js"></script>
+<script src="navbar.js"></script>
+
+</body>
+</html>

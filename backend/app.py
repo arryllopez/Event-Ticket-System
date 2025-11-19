@@ -18,6 +18,7 @@ from backend.routes.admin_events import admin_bp
 #customer dashboard
 from backend.routes.customer_dashboard import customer_dashboard_bp
 from backend.routes.checkout import checkout_bp
+from backend.routes.views import views_bp
 
 
 
@@ -67,6 +68,9 @@ def create_app():
 
     # CHECKOUT
     app.register_blueprint(checkout_bp)
+
+    #VIEWS
+    app.register_blueprint(views_bp, url_prefix="/api/views")
 
 
     @app.route("/")
