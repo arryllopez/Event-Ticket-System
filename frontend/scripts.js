@@ -30,6 +30,24 @@ function getEventImage(categoryName) {
   return map[categoryName] || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800";
 }
 
+function updateAuthUI() {
+  const token = localStorage.getItem("authToken");
+
+  const loginBtns = document.querySelectorAll(".btn-login");
+  const logoutBtns = document.querySelectorAll(".btn-logout");
+
+  if (token) {
+    loginBtns.forEach(btn => (btn.style.display = "none"));
+    logoutBtns.forEach(btn => (btn.style.display = "block"));
+  } else {
+    loginBtns.forEach(btn => (btn.style.display = "block"));
+    logoutBtns.forEach(btn => (btn.style.display = "none"));
+  }
+}
+
+
+
+
 // ============================================================
 // RENDER EVENTS
 // ============================================================

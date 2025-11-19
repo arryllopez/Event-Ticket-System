@@ -12,20 +12,27 @@ def get_event_by_id(event_id):
         return jsonify({"error": "Event not found"}), 404
 
     return jsonify({
-        "event_id": event.event_id,
-        "event_name": event.event_name,
-        "event_date": event.event_date,
-        "description": event.description,
-        "organizer_name": event.organizer_name,
-        "status": event.status,
-        "category": {
-            "category_id": event.category.category_id,
-            "category_name": event.category.category_name
-        } if event.category_id else None,
-        "venue": {
-            "venue_id": event.venue.venue_id,
-            "venue_name": event.venue.venue_name,
-            "city": event.venue.city,
-            "address": event.venue.address
-        } if event.venue else None
-    })
+    "event_id": event.event_id,
+    "event_name": event.event_name,
+    "event_date": event.event_date,
+    "description": event.description,
+    "organizer_name": event.organizer_name,
+    "status": event.status,
+
+    # ADD THESE TWO
+    "category_id": event.category_id,
+    "venue_id": event.venue_id,
+
+    "category": {
+        "category_id": event.category.category_id,
+        "category_name": event.category.category_name
+    } if event.category else None,
+
+    "venue": {
+        "venue_id": event.venue.venue_id,
+        "venue_name": event.venue.venue_name,
+        "city": event.venue.city,
+        "address": event.venue.address
+    } if event.venue else None
+})
+

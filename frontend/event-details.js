@@ -1,208 +1,134 @@
 // ============================================================
-// EVENT DETAILS PAGE - FULL DB INTEGRATION
+// EVENT DETAILS PAGE - FINAL WORKING VERSION
 // ============================================================
 
-// Get event ID from URL
 function getEventId() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("id");
+  const p = new URLSearchParams(window.location.search);
+  return parseInt(p.get("id"), 10);
 }
 
-// Local cache for this page
 let EVENT_DETAILS_CACHE = null;
 
-// Join data similarly
-function joinEventDataDetails(events, categories, venues, tickets) {
-  const categoryById = {};
-  const venueById = {};
-  const ticketsByEventId = {};
-
-  (categories || []).forEach((c) => {
-    categoryById[c.category_id] = c;
-  });
-
-  (venues || []).forEach((v) => {
-    venueById[v.venue_id] = v;
-  });
-
-  (tickets || []).forEach((t) => {
-    if (!ticketsByEventId[t.event_id]) {
-      ticketsByEventId[t.event_id] = [];
-    }
-    ticketsByEventId[t.event_id].push(t);
-  });
-
-  return (events || []).map((e) => ({
-    ...e,
-    category: categoryById[e.category_id] || null,
-    venue: venueById[e.venue_id] || null,
-    tickets: ticketsByEventId[e.event_id] || []
-  }));
-}
-
-// Load event details from API
 async function loadEventDetails() {
-  const eventId = parseInt(getEventId(), 10);
+  const eventId = getEventId();
 
   if (!eventId) {
-    alert("Event not found!");
+    alert("Invalid event.");
     window.location.href = "index.html";
     return;
   }
 
   try {
-    // Fetch all relevant data (for a small project, this is fine)
-    const [events, categories, venues, tickets] = await Promise.all([
-      fetchAllEventsRaw(),
-      fetchAllCategoriesRaw(),
-      fetchAllVenuesRaw(),
-      fetchAllTicketsRaw()
-    ]);
+    // 1. Load event
+    const event = await fetchEventById(eventId);
+    console.log("===== EVENT FROM API =====");
+    console.log(event);
+    console.log("event.category_id:", event.category_id);
+    console.log("event.venue_id:", event.venue_id);
 
-    const joined = joinEventDataDetails(events, categories, venues, tickets);
 
-    const event = joined.find((e) => e.event_id === eventId);
+    // 2. Load relational data
+    const tickets = await apiRequest(`${API_BASE_URL}/event-tickets/${eventId}`);
+    const categories = await apiRequest(`${API_BASE_URL}/categories/`);
+    const venues = await apiRequest(`${API_BASE_URL}/venues/`);
 
-    if (!event) {
-      alert("Event not found!");
-      window.location.href = "index.html";
-      return;
-    }
+    console.log("===== ALL VENUES =====");
+console.log(venues);
 
-    EVENT_DETAILS_CACHE = event;
+console.log("===== ALL CATEGORIES =====");
+console.log(categories);
 
-    displayEventDetails(event);
-    loadTicketOptions(event.tickets);
-  } catch (error) {
-    console.error("Error loading event:", error);
+
+    // 3. Join relational data
+    const category = categories.find(c => Number(c.category_id) === Number(event.category_id));
+const venue = venues.find(v => Number(v.venue_id) === Number(event.venue_id));
+
+console.log("===== MATCHED CATEGORY =====", category);
+console.log("===== MATCHED VENUE =====", venue);
+
+
+    EVENT_DETAILS_CACHE = {
+      ...event,
+      category,
+      venue,
+      tickets
+    };
+
+    displayEventDetails(EVENT_DETAILS_CACHE);
+    loadTicketOptions(EVENT_DETAILS_CACHE.tickets);
+
+  } catch (err) {
+    console.error("Error loading event:", err);
     alert("Failed to load event details.");
     window.location.href = "index.html";
   }
 }
 
-// Display event information
 function displayEventDetails(event) {
   document.title = `${event.event_name} - TixMaster`;
 
-  const imgEl = document.getElementById("eventImage");
-  if (imgEl) {
-    imgEl.src =
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop";
-    imgEl.alt = event.event_name;
-  }
+  document.getElementById("eventImage").src =
+    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800";
 
-  const categoryEl = document.getElementById("eventCategory");
-  if (categoryEl) {
-    categoryEl.textContent = event.category?.category_name || "Event";
-  }
+  document.getElementById("eventCategory").textContent =
+    event.category?.category_name || "Event";
 
-  const nameEl = document.getElementById("eventName");
-  if (nameEl) {
-    nameEl.textContent = event.event_name;
-  }
+  document.getElementById("eventName").textContent = event.event_name;
+  document.getElementById("eventDescription").textContent =
+    event.description || "";
 
-  const descEl = document.getElementById("eventDescription");
-  if (descEl) {
-    descEl.textContent = event.description || "";
-  }
+  const date = new Date(event.event_date);
+  document.getElementById("eventDateTime").textContent =
+    !isNaN(date)
+      ? date.toLocaleString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      : event.event_date;
 
-  const dateTimeEl = document.getElementById("eventDateTime");
-  if (dateTimeEl) {
-    const eventDate = new Date(event.event_date);
-    if (!isNaN(eventDate.getTime())) {
-      const dateOptions = {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      };
-      const timeOptions = {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      };
-      const formattedDate = eventDate.toLocaleDateString(
-        "en-US",
-        dateOptions
-      );
-      const formattedTime = eventDate.toLocaleTimeString(
-        "en-US",
-        timeOptions
-      );
-      dateTimeEl.textContent = `${formattedDate} at ${formattedTime}`;
-    } else {
-      dateTimeEl.textContent = event.event_date || "";
-    }
-  }
+  document.getElementById("eventVenue").textContent = event.venue
+    ? `${event.venue.venue_name}\n${event.venue.address}`
+    : "Venue not available";
 
-  const venueEl = document.getElementById("eventVenue");
-  if (venueEl) {
-    if (event.venue) {
-      venueEl.textContent = `${event.venue.venue_name}\n${event.venue.address || ""
-        }`;
-    } else {
-      venueEl.textContent = "Venue details coming soon.";
-    }
-  }
-
-  const organizerEl = document.getElementById("eventOrganizer");
-  if (organizerEl) {
-    organizerEl.textContent = event.organizer_name || "Organizer";
-  }
+  document.getElementById("eventOrganizer").textContent =
+    event.organizer_name || "Organizer";
 }
 
-// Load available ticket options
 function loadTicketOptions(tickets) {
-  const ticketOptionsContainer = document.getElementById("ticketOptions");
-
-  if (!ticketOptionsContainer) return;
+  const container = document.getElementById("ticketOptions");
 
   if (!tickets || tickets.length === 0) {
-    ticketOptionsContainer.innerHTML =
-      '<p style="color: var(--text-secondary);">No tickets available at this time.</p>';
+    container.innerHTML = `<p style="color:var(--text-secondary);">No tickets available.</p>`;
     return;
   }
 
-  ticketOptionsContainer.innerHTML = tickets
-    .map((ticket) => {
-      const price = parseFloat(ticket.price);
-      return `
+  container.innerHTML = tickets
+    .map(
+      t => `
       <div class="ticket-option">
         <div class="ticket-info">
-          <h4>${ticket.ticket_type}</h4>
-          <p>${ticket.quantity_available} tickets available</p>
+          <h4>${t.ticket_type}</h4>
+          <p>${t.quantity_available} available</p>
         </div>
         <div class="ticket-price">
-          <div class="price">$${price.toFixed(2)}</div>
-          <button class="btn-primary" onclick="purchaseTicket(${ticket.ticket_id}, '${ticket.ticket_type}', ${price})" style="margin-top: 8px;">
+          <div class="price">$${parseFloat(t.price).toFixed(2)}</div>
+          <button class="btn-primary"
+            onclick="purchaseTicket(${t.ticket_id}, '${t.ticket_type}', ${t.price})">
             Select
           </button>
         </div>
       </div>
-    `;
-    })
+    `
+    )
     .join("");
 }
 
-// Purchase ticket (still just a stub popup)
-function purchaseTicket(ticketId, ticketType, price) {
-  const confirmed = confirm(
-    `Purchase Ticket?\n\n` +
-      `Type: ${ticketType}\n` +
-      `Price: $${price.toFixed(2)}\n\n` +
-      `This will redirect to a checkout page once the purchase API is wired up.`
-  );
-
-  if (confirmed) {
-    alert(
-      "Connect your purchase / payment API routes to complete this flow!"
-    );
-    // Example future behavior:
-    // window.location.href = `checkout.html?ticketId=${ticketId}`;
-  }
+function purchaseTicket(id, type, price) {
+  alert(`Stub: purchase ${type} for $${price}.`);
 }
 
-// Initialize page
-document.addEventListener("DOMContentLoaded", function () {
-  loadEventDetails();
-});
+document.addEventListener("DOMContentLoaded", loadEventDetails);

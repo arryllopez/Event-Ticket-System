@@ -2,35 +2,35 @@
 // API Configuration
 // ============================================================
 
-// Change port if your Flask app runs somewhere else
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = "http://localhost:5000/api";
 
-// API Endpoints matching your Flask routes
 const API_ENDPOINTS = {
   auth: {
-    register: `${API_BASE_URL}/register`,
-    login: `${API_BASE_URL}/login`,
-    me: `${API_BASE_URL}/me`,
+    register: `${API_BASE_URL}/auth/register`,
+    login: `${API_BASE_URL}/auth/login`,
+    me: `${API_BASE_URL}/auth/me`,
   },
 
-  events: {
-    getAll: `${API_BASE_URL}/events`,
-    getById: (id) => `${API_BASE_URL}/events/${id}`,
-  },
-
-  // 🔐 Admin-only endpoints
   admin: {
     getMyEvents: `${API_BASE_URL}/admin/events`,
+    createEvent: `${API_BASE_URL}/admin/events`,
+    updateEvent: (id) => `${API_BASE_URL}/admin/events/${id}`,
+    deleteEvent: (id) => `${API_BASE_URL}/admin/events/${id}`,
   },
 
-  // Purchases & tickets based on your existing routes
+ events: {
+    getAll: `${API_BASE_URL}/events`,
+    getById: (id) => `${API_BASE_URL}/events/${id}`,   
+},
+
+
   purchases: {
-    create: `${API_BASE_URL}/tickets/buy`,
+    create: `${API_BASE_URL}/purchases`,
     getMine: `${API_BASE_URL}/purchases`,
   },
 
   tickets: {
-    myTickets: `${API_BASE_URL}/tickets/my`,
+    myTickets: `${API_BASE_URL}/tickets`,
   },
 
   export: {
@@ -47,7 +47,6 @@ const API_ENDPOINTS = {
 // API Helper Functions
 // ============================================================
 
-// Generic fetch wrapper with error handling + JWT injection
 async function apiRequest(url, options = {}) {
   try {
     const token = localStorage.getItem("authToken");
@@ -72,10 +71,7 @@ async function apiRequest(url, options = {}) {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
-    // For 204 etc.
-    if (response.status === 204) {
-      return null;
-    }
+    if (response.status === 204) return null;
 
     return await response.json();
   } catch (error) {
@@ -85,7 +81,7 @@ async function apiRequest(url, options = {}) {
 }
 
 // ============================================================
-// Auth API Functions
+// Authentication
 // ============================================================
 
 async function registerCustomer(customerData) {
@@ -101,7 +97,6 @@ async function loginCustomer(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
-  // Expecting { token, role, email, first_name, last_name }
   if (data && data.token) {
     localStorage.setItem("authToken", data.token);
     localStorage.setItem("authRole", data.role || "user");
@@ -116,7 +111,7 @@ async function fetchCurrentUser() {
 }
 
 // ============================================================
-// Event API Functions
+// Events
 // ============================================================
 
 async function fetchAllEvents() {
@@ -127,13 +122,12 @@ async function fetchEventById(eventId) {
   return await apiRequest(API_ENDPOINTS.events.getById(eventId));
 }
 
-// 🔐 Admin: fetch only events owned by this organizer (by email)
 async function fetchAdminEvents() {
   return await apiRequest(API_ENDPOINTS.admin.getMyEvents);
 }
 
 // ============================================================
-// Purchase / Ticket Helpers
+// Purchases / Tickets
 // ============================================================
 
 async function createPurchase(purchaseData) {
