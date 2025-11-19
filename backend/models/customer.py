@@ -64,6 +64,7 @@ class Event(db.Model):
 
     total_tickets = db.Column(db.Integer, nullable=False)
     tickets_sold = db.Column(db.Integer, default=0)
+    total_revenue = db.Column(db.Numeric(10, 2), default=0)
 
     status = db.Column(
         db.Enum("Upcoming", "Ongoing", "Completed", "Cancelled"),
@@ -85,6 +86,7 @@ class Ticket(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     quantity_available = db.Column(db.Integer, nullable=False)
 
+    event = db.relationship("Event", backref="tickets", lazy=True)
     purchase_tickets = db.relationship("PurchaseTicket", back_populates="ticket")
 
 

@@ -17,9 +17,7 @@ def require_admin():
         return None
     return user
 
-# -------------------------
-# ADMIN: GET EVENTS THEY OWN
-# -------------------------
+
 @admin_bp.route("/events", methods=["GET"])
 @jwt_required()
 def get_admin_events():
@@ -27,7 +25,7 @@ def get_admin_events():
     if claims.get("role") != "admin":
         return jsonify({"error": "Admin access required"}), 403
 
-    identity = get_jwt_identity()  
+    identity = get_jwt_identity()
     customer = Customer.query.filter_by(email=identity).first()
 
     if not customer:
@@ -35,8 +33,22 @@ def get_admin_events():
 
     events = Event.query.filter_by(organizer_email=customer.email).all()
 
-    result = [
-        {
+    from backend.models.customer import PurchaseTicket, Ticket, Purchase
+
+    result = []
+    for e in events:
+        revenue_query = (
+            db.session.query(db.func.sum(PurchaseTicket.subtotal))
+            .join(Ticket, Ticket.ticket_id == PurchaseTicket.ticket_id)
+            .join(Purchase, Purchase.purchase_id == PurchaseTicket.purchase_id)
+            .filter(Ticket.event_id == e.event_id)
+            .filter(Purchase.payment_status == "Completed")
+            .scalar()
+        )
+
+        revenue = float(revenue_query or 0)
+
+        result.append({
             "event_id": e.event_id,
             "event_name": e.event_name,
             "event_date": e.event_date.strftime("%Y-%m-%d %H:%M:%S"),
@@ -44,15 +56,23 @@ def get_admin_events():
             "organizer_name": e.organizer_name,
             "organizer_email": e.organizer_email,
             "category_id": e.category_id,
+            "category_name": e.category.category_name if e.category else None,
             "venue_id": e.venue_id,
+            "venue_name": e.venue.venue_name if e.venue else None,
+            "city": e.venue.city if e.venue else None,
             "total_tickets": e.total_tickets,
             "tickets_sold": e.tickets_sold,
             "status": e.status,
-        }
-        for e in events
-    ]
+            "revenue":revenue
+        })
+
     return jsonify(result), 200
 
+
+
+@admin_bp.route("/debug/event-columns", methods=["GET"])
+def debug_event_columns():
+    return jsonify(list(Event.__table__.columns.keys()))
 
 
 

@@ -40,7 +40,7 @@ async function initAdminDashboard() {
     emptyEl.style.display = "none";
 
     tbodyEl.innerHTML = events
-      .map((e) => {
+      .map(e => {
         const date = new Date(e.event_date);
         const formattedDate = isNaN(date)
           ? e.event_date
@@ -52,15 +52,25 @@ async function initAdminDashboard() {
               minute: "2-digit"
             });
 
+        const revenue = (e.tickets || []).reduce(
+          (sum, t) => sum + Number(t.price) * Number(t.quantity_sold || 0),
+          0
+        );
+
         return `
           <tr>
             <td>${e.event_id}</td>
             <td>${e.event_name}</td>
+            <td>${e.category_name || ""}</td>
+            <td>${e.venue_name || ""}</td>
+            <td>${e.city || ""}</td>
             <td>${formattedDate}</td>
             <td>${e.status}</td>
             <td>${e.total_tickets}</td>
             <td>${e.tickets_sold}</td>
+            <td>$${(e.total_revenue || 0).toFixed(2)}</td>
             <td>${e.organizer_email || ""}</td>
+
             <td>
               <button class="btn-small edit-btn" onclick="openEditEvent(${e.event_id})">Edit</button>
               <button class="btn-small delete-btn" onclick="deleteEvent(${e.event_id})">Delete</button>
@@ -75,6 +85,7 @@ async function initAdminDashboard() {
     emptyEl.style.display = "block";
   }
 }
+
 
 function openCreateEvent() {
   document.getElementById("modalTitle").textContent = "Create Event";

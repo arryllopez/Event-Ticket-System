@@ -176,11 +176,14 @@ async function loadCategoryEvents() {
   renderEventCards(filtered);
 }
 
-// ============================================================
-// INIT
-// ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
   loadCategoryEvents();
 
   document.getElementById("sortFilter").addEventListener("change", loadCategoryEvents);
 });
+
+//applying filters button
+window.applyFilters = function () {
+  loadCategoryEvents();
+};

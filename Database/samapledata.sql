@@ -20,14 +20,15 @@ INSERT INTO VENUE (venue_name, address, city, capacity, phone) VALUES
 ('Outdoor Park', '987 Park Avenue', 'Oshawa', 10000, '905-555-0106');
 
 -- EVENT data
-INSERT INTO EVENT (event_name, event_date, description, organizer_name, organizer_email, category_id, venue_id, total_tickets, tickets_sold, status) VALUES
-('Rock Legends Live', '2025-12-15 19:00:00', 'Classic rock tribute concert', 'LiveNation Events', 'contact@livenation.com', 1, 1, 10000, 4500, 'Upcoming'),
-('Basketball Championship', '2025-11-20 18:30:00', 'Regional basketball finals', 'Sports Management Inc', 'info@sportsmanage.com', 2, 4, 20000, 15000, 'Upcoming'),
-('Shakespeare Festival', '2025-11-10 20:00:00', 'A Midsummer Nights Dream', 'Theater Guild', 'admin@theaterguild.com', 3, 2, 800, 650, 'Upcoming'),
-('Tech Innovation Summit', '2025-12-05 09:00:00', 'Annual technology conference', 'TechConnect', 'events@techconnect.com', 4, 5, 2500, 1200, 'Upcoming'),
-('Comedy Night Special', '2025-11-25 21:00:00', 'Stand-up comedy showcase', 'Laugh Factory', 'bookings@laughfactory.com', 5, 2, 1000, 800, 'Upcoming'),
-('Summer Music Festival', '2025-06-20 14:00:00', 'Three-day outdoor music festival', 'Festival Productions', 'info@festivalprod.com', 6, 6, 8000, 8000, 'Completed'),
-('Jazz Evening', '2025-11-08 19:30:00', 'Smooth jazz performance', 'City Events', 'jazz@cityevents.com', 1, 3, 400, 320, 'Upcoming');
+INSERT INTO EVENT (event_name, event_date, description, organizer_name, organizer_email, category_id, venue_id, total_tickets, tickets_sold, status, total_revenue) VALUES
+('Rock Legends Live', '2025-12-15 19:00:00', 'Classic rock tribute concert', 'LiveNation Events', 'contact@livenation.com', 1, 1, 10000, 4500, 'Upcoming', 559000.00),
+('Basketball Championship', '2025-11-20 18:30:00', 'Regional basketball finals', 'Sports Management Inc', 'info@sportsmanage.com', 2, 4, 20000, 15000, 'Upcoming', 1075000.00),
+('Shakespeare Festival', '2025-11-10 20:00:00', 'A Midsummer Nights Dream', 'Theater Guild', 'admin@theaterguild.com', 3, 2, 800, 650, 'Upcoming', 34125.00),
+('Tech Innovation Summit', '2025-12-05 09:00:00', 'Annual technology conference', 'TechConnect', 'events@techconnect.com', 4, 5, 2500, 1200, 'Upcoming', 199900.00),
+('Comedy Night Special', '2025-11-25 21:00:00', 'Stand-up comedy showcase', 'Laugh Factory', 'bookings@laughfactory.com', 5, 2, 1000, 800, 'Upcoming', 10500.00),
+('Summer Music Festival', '2025-06-20 14:00:00', 'Three-day outdoor music festival', 'Festival Productions', 'info@festivalprod.com', 6, 6, 8000, 8000, 'Completed', 800000.00),
+('Jazz Evening', '2025-11-08 19:30:00', 'Smooth jazz performance', 'City Events', 'jazz@cityevents.com', 1, 3, 400, 320, 'Upcoming', 17600.00);
+
 
 -- TICKET data (multiple ticket types per event)
 INSERT INTO TICKET (event_id, ticket_type, price, quantity_available) VALUES
