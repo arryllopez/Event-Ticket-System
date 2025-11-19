@@ -109,12 +109,18 @@
             <!-- RIGHT SIDE -->
             <div class="header-actions">
 
+                 <div id="cartIcon" class="cart-icon" onclick="window.location.href='cart.html'" 
+                    style="display:none; cursor:pointer; margin-left: 12px;">
+                    🛒 <span id="cartCount">0</span>
+                </div>
+                
                 <!-- WEATHER WIDGET (ALWAYS VISIBLE) -->
                 <div id="weatherWidget" class="weather-widget">
                     <span id="weatherCity">Loading...</span>
                     <span id="weatherTemp"></span>
                     <img id="weatherIcon" style="width: 26px; height: 26px;" />
                 </div>
+               
 
                 <!-- AUTH AREA (navbar.js will populate this) -->
                 <div id="authButtons" class="auth-area"></div>

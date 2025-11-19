@@ -1,7 +1,10 @@
 // ============================================================
-// EVENT DETAILS PAGE - FINAL WORKING VERSION
+// EVENT DETAILS PAGE - WITH CART SUPPORT
 // ============================================================
 
+// -------------------------------
+// Get Event ID
+// -------------------------------
 function getEventId() {
   const p = new URLSearchParams(window.location.search);
   return parseInt(p.get("id"), 10);
@@ -9,6 +12,9 @@ function getEventId() {
 
 let EVENT_DETAILS_CACHE = null;
 
+// -------------------------------
+// Load Event Details
+// -------------------------------
 async function loadEventDetails() {
   const eventId = getEventId();
 
@@ -19,43 +25,15 @@ async function loadEventDetails() {
   }
 
   try {
-    // 1. Load event
     const event = await fetchEventById(eventId);
-    console.log("===== EVENT FROM API =====");
-    console.log(event);
-    console.log("event.category_id:", event.category_id);
-    console.log("event.venue_id:", event.venue_id);
-
-
-    // 2. Load relational data
     const tickets = await apiRequest(`${API_BASE_URL}/event-tickets/${eventId}`);
-    console.log("eventId used for tickets:", eventId);
-    console.log("tickets returned:", tickets);
-
     const categories = await apiRequest(`${API_BASE_URL}/categories/`);
     const venues = await apiRequest(`${API_BASE_URL}/venues/`);
 
-    console.log("===== ALL VENUES =====");
-    console.log(venues);
-
-    console.log("===== ALL CATEGORIES =====");
-    console.log(categories);
-
-
-    // 3. Join relational data
     const category = categories.find(c => Number(c.category_id) === Number(event.category_id));
-const venue = venues.find(v => Number(v.venue_id) === Number(event.venue_id));
+    const venue = venues.find(v => Number(v.venue_id) === Number(event.venue_id));
 
-console.log("===== MATCHED CATEGORY =====", category);
-console.log("===== MATCHED VENUE =====", venue);
-
-
-    EVENT_DETAILS_CACHE = {
-      ...event,
-      category,
-      venue,
-      tickets
-    };
+    EVENT_DETAILS_CACHE = { ...event, category, venue, tickets };
 
     displayEventDetails(EVENT_DETAILS_CACHE);
     loadTicketOptions(EVENT_DETAILS_CACHE.tickets);
@@ -67,6 +45,9 @@ console.log("===== MATCHED VENUE =====", venue);
   }
 }
 
+// -------------------------------
+// Display Event Details
+// -------------------------------
 function displayEventDetails(event) {
   document.title = `${event.event_name} - TixMaster`;
 
@@ -77,8 +58,7 @@ function displayEventDetails(event) {
     event.category?.category_name || "Event";
 
   document.getElementById("eventName").textContent = event.event_name;
-  document.getElementById("eventDescription").textContent =
-    event.description || "";
+  document.getElementById("eventDescription").textContent = event.description;
 
   const date = new Date(event.event_date);
   document.getElementById("eventDateTime").textContent =
@@ -94,13 +74,16 @@ function displayEventDetails(event) {
       : event.event_date;
 
   document.getElementById("eventVenue").textContent = event.venue
-    ? `${event.venue.venue_name}\n${event.venue.address}`
+    ? `${event.venue.venue_name}, ${event.venue.address}`
     : "Venue not available";
 
   document.getElementById("eventOrganizer").textContent =
     event.organizer_name || "Organizer";
 }
 
+// -------------------------------
+// Ticket Options
+// -------------------------------
 function loadTicketOptions(tickets) {
   const container = document.getElementById("ticketOptions");
 
@@ -119,8 +102,9 @@ function loadTicketOptions(tickets) {
         </div>
         <div class="ticket-price">
           <div class="price">$${parseFloat(t.price).toFixed(2)}</div>
+
           <button class="btn-primary"
-            onclick="purchaseTicket(${t.ticket_id}, '${t.ticket_type}', ${t.price})">
+            onclick="addToCart(${t.ticket_id}, '${t.ticket_type}', ${t.price}, ${EVENT_DETAILS_CACHE.event_id})">
             Select
           </button>
         </div>
@@ -130,8 +114,58 @@ function loadTicketOptions(tickets) {
     .join("");
 }
 
-function purchaseTicket(id, type, price) {
-  alert(`Stub: purchase ${type} for $${price}.`);
+// ============================================================
+// ADD TO CART
+// ============================================================
+function addToCart(ticketId, type, price, eventId) {
+  if (!localStorage.getItem("authToken")) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // ALWAYS include ticket_type and fallback
+  const item = {
+    ticket_id: ticketId,
+    event_id: eventId,
+    event_name: EVENT_DETAILS_CACHE.event_name,
+    ticket_type: type || "General Admission",
+    price: Number(price),
+    quantity: 1
+  };
+
+  cart.push(item);
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  updateCartIcon();
+
+  alert(`Added 1 × ${item.ticket_type} to cart.`);
 }
 
-document.addEventListener("DOMContentLoaded", loadEventDetails);
+
+
+// -------------------------------
+// Update Cart Icon Count
+// -------------------------------
+function updateCartIcon() {
+  const cartIcon = document.getElementById("cartIcon");
+  const cartCount = document.getElementById("cartCount");
+
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const count = cart.length;
+
+  if (count > 0) {
+    cartIcon.style.display = "inline-flex";
+    cartCount.textContent = count;
+  } else {
+    cartIcon.style.display = "none";
+  }
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", () => {
+  loadEventDetails();
+  setTimeout(updateCartIcon, 300); // small delay so navbar loads first
+});
