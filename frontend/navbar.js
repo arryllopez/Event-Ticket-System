@@ -55,40 +55,22 @@ function logout() {
 
 // ---------- WEATHER ----------
 async function loadNavbarWeather() {
-  const API_KEY = "bb82621cf968e35ce7553f9735f9a69c";
+    const API_KEY = "bb82621cf968e35ce7553f9735f9a69c";
+    const city = "Toronto";
 
-  // Check if geolocation is available
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+    try {
+        const res = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+        );
+        const data = await res.json();
 
-        try {
-          const res = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-          );
-          const data = await res.json();
-
-          document.getElementById("weatherCity").textContent = data.name;
-          document.getElementById("weatherTemp").textContent = `${Math.round(data.main.temp)}°C`;
-          document.getElementById("weatherIcon").src =
+        document.getElementById("weatherCity").textContent = city;
+        document.getElementById("weatherTemp").textContent = `${Math.round(data.main.temp)}°C`;
+        document.getElementById("weatherIcon").src =
             `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
-        } catch (err) {
-          document.getElementById("weatherCity").textContent = "Weather N/A";
-        }
-      },
-      (error) => {
-        // Handle geolocation errors
-        document.getElementById("weatherCity").textContent = "Location N/A";
-        console.error("Error fetching location: ", error);
-      }
-    );
-  } else {
-    // Geolocation not supported
-    document.getElementById("weatherCity").textContent = "Geo N/A";
-  }
+    } catch (err) {
+        document.getElementById("weatherCity").textContent = "Weather N/A";
+    }
 }
-
 
 document.addEventListener("DOMContentLoaded", loadNavbarWeather);
